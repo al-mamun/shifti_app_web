@@ -11,9 +11,6 @@ class Pages extends Model
 
     protected $guarded = [];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-    protected $table = 'page_settings';
+ 
+    protected $table = 'pages';
 }

@@ -87,6 +87,7 @@
                                     							     <option value="Basics" @if($faqInfo->type=='Basics') selected @endif> Basics</option>
                                     							     <option value="Account & settings" @if($faqInfo->type=='Account & settings') selected @endif> Account & settings </option>
                                     							     <option value="Security" @if($faqInfo->type=='Security') selected @endif> Security </option>
+                                    							     <option value="Product" @if($faqInfo->type=='Product') selected @endif> Product </option>
                                     							 </select>
                                 				            </div>
                                                         </div>
@@ -115,7 +116,7 @@
 <script>
 	$('.repeater-add-btn').on('click', function(event) {
 	       	
-	    $('.reapert_result').append('<div class="repater"><div class="items" data-group="test"> <div class="item-content"> <div class="form-group"> <label for="inputEmail" class="col-lg-2 control-label">Title</label> <div class="col-lg-10"> <input type="text" class="form-control" id="inputName" placeholder="Title" data-name="name" name="title[]">   </div>  </div></div> </div> <div id="repeater"><div class="items" data-group="test"><div class="item-content"><div class="form-group"><label for="inputEmail" class="col-lg-2 control-label">content</label> <div class="col-lg-10"><input type="text" class="form-control" id="inputName" placeholder="content" data-name="content" name="content[]"></div></div></div></div></div><div id="repeater"><div class="items" data-group="test"> <div class="form-group"><label for="type" class="col-lg-10 control-label">Type</label><div class="col-md-10"><select name="type[]" style="width:100%"  class="form-control" aria-label="Default select example"> <option value="">Select type</option><option value="Basics"> Basics</option><option value="Account & settings"> Account & settings </option><option value="Security"> Security </option> </select></div></div></div></div></div>');
+	    $('.reapert_result').append('<div class="repater"><div class="items" data-group="test"> <div class="item-content"> <div class="form-group"> <label for="inputEmail" class="col-lg-2 control-label">Title</label> <div class="col-lg-10"> <input type="text" class="form-control" id="inputName" placeholder="Title" data-name="name" name="title[]">   </div>  </div></div> </div> <div id="repeater"><div class="items" data-group="test"><div class="item-content"><div class="form-group"><label for="inputEmail" class="col-lg-2 control-label">content</label> <div class="col-lg-10"><input type="text" class="form-control" id="inputName" placeholder="content" data-name="content" name="content[]"></div></div></div></div></div><div id="repeater"><div class="items" data-group="test"> <div class="form-group"><label for="type" class="col-lg-10 control-label">Type</label><div class="col-md-10"><select name="type[]" style="width:100%"  class="form-control" aria-label="Default select example"> <option value="">Select type</option><option value="Basics"> Basics</option><option value="Account & settings"> Account & settings </option><option value="Security"> Security </option><option value="Product"> Product </option> </select></div></div></div></div></div>');
 	}); 
 	
 

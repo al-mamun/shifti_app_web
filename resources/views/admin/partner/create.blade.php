@@ -6,7 +6,7 @@
         <div class="page-header">
           	<div class="row">
 	            <div class="col-lg-6">
-	              	<h3>Add new JOb</h3>
+	              	<h3>Add new Partner</h3>
 	            </div>
 	        </div>
 	        @if ($errors->any())
@@ -29,36 +29,28 @@
 	        @endif
 	        <div class="card">
 			    <div class="card-body">
-				    <form action="{{route('partner.store')}}" method="POST" enctype="multipart/form-data">
-				    	@csrf
-				        <div class="row">
-				            <div class="col-md-6 mb-3">
-				                <label for="partner_name">Partner Name</label>
-				                <input class="form-control" id="partner_name" type="text" placeholder="Partner Name" value="{{old('partner_name')}}" name="partner_name" title="Partner Name" />
-				            </div>
-                            <div class="row" style="margin-bottom:10px">
-                            <div class="col-md-12 mb-3 form-group">
+				  <form action="{{route('partner.store')}}" method="POST" enctype="multipart/form-data">
+			         	@csrf
+    			        <div class="row">
+    			            <div class="col-md-6 mb-3">
+    			                <label for="partner_name">Partner Name<span style="color:red">*</span></label>
+    			                <input class="form-control" id="partner_name" type="text" placeholder="Partner Name" value="{{old('partner_name')}}" name="partner_name" title="Partner Name" />
+    			            </div>
+    			        </div>
+                        <div class="row" style="margin-bottom:10px">
+                            <div class="col-md-6 mb-3 form-group">
                                 <label for="validationDefault01">Partner Icon Upload <span style="color:red">*</span></label>
-                                <div class="holder">
-                                    <img id="imgPreview" src="{{ asset('images/homepage/' . $homePage->thumbnail) }}" alt="pic" />
-                                </div>
-				                
-				                <div class="input_container">
-                                    <input type="file" name="partner_icon" id="photo"  value= />
+    			                <div class="input_container">
+                                    <input class="form-control" type="file" name="partner_icon" id="icon" />
                                 </div>
                             </div>
                         </div>
-				        <div class="row">
-				            <div class="col-md-6 mb-3">
-				                 <button class="btn btn-primary" type="submit" data-original-title="" title="">Submit </button>
-							</div>
-				        </div>
-				       </form>
-				   </div>
-				</div>
-
-			</div>
-
-		</div>
-	</div>
+    			        <div class="row">
+    			            <div class="col-md-6 mb-3">
+    			                 <button class="btn btn-primary" type="submit" data-original-title="" title="">Submit </button>
+    						</div>
+    			        </div>
+			      </form>
+		    </div>
+	    </div>
 @endsection

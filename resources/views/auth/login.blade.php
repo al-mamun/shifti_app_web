@@ -20,7 +20,7 @@
             width: 350px;
             margin-top: auto;
             margin-bottom: auto;
-            background: #f39c12;
+            background: #fff;
             position: relative;
             display: flex;
             justify-content: center;
@@ -87,7 +87,7 @@
             <div class="user_card">
                 <div class="d-flex justify-content-center">
                     <div class="brand_logo_container">
-                        <img src="https://cdn.freebiesupply.com/logos/large/2x/pinterest-circle-logo-png-transparent.png" class="brand_logo" alt="Logo">
+                        <img src="{{ asset('IconBlue.png') }}" class="brand_logo" alt="Logo">
                     </div>
                 </div>
                 @if ($errors->any())

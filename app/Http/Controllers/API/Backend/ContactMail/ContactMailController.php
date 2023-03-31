@@ -8,13 +8,42 @@ use App\Http\Resources\Backend\ContactUsEmail\ContactUsEmailListResource;
 use App\Mail\AdminSendToUserMail;
 use App\Mail\ContactUsEmail;
 use App\Models\ContactUsMail;
+use App\Models\Subscribe;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class ContactMailController extends Controller
 {
+    
+    public function subscribeApplyJob(Request $request) {
+        
+        $validator = Validator::make($request->all(), [
+            'email'        => 'required|email|unique:email_subscriber',
+        
+        ]);
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+       
+        $email =  $request->get('email');
+        $subcriberInfo = new Subscribe();
+        $subcriberInfo->email = $email;
+        $subcriberInfo->save();
+        
+        $jobOpenArray = [
+            'status' => 100,
+            'message' => "Successfully send data",
+        ];
+        return json_encode($jobOpenArray);
+       
+    }
     /**
      * Display a listing of the resource.
      *

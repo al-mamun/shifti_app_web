@@ -310,44 +310,28 @@ class CartController extends Controller
     {
 
         $carts = Cart::where('customer_id', auth()->user()->id)
-            ->where('type', 2)
             ->with('product')
-            ->limit(1)
             ->latest()
-            ->get();
+            ->first();
             
         $quantity             = 0;
         $total                = 0;
         $after_discount_total = 0;
         $product_type_id      = 1;
-
-        foreach ($carts as $cart) {
-            
-             $productSubcraption = ProductSubscription::where('id', $cart->subscriber_id)->first();
-            
-            $product_type_id  = $cart->product_type_id;
-            $quantity         = 1;
-            $total            = ($productSubcraption->price ) * 1;
-            $temp_after_discount_amount = $productSubcraption->price;
-
-            if ($cart->product->discount_amount != null) {
-                $temp_after_discount_amount = $productSubcraption->price;
-            }
-
-            if ($cart->product->discount_percent != null and $cart->product->discount_percent > 0) {
-                $temp_after_discount_amount = $temp_after_discount_amount - ($temp_after_discount_amount * $cart->product->discount_percent) / 100;
-            }
-            $after_discount_total =  $temp_after_discount_amount * 1;
-        }
-
-        $summary['subTotal']                     = $total;
-        $summary['discount']                     = $total - $after_discount_total;
-        $summary['after_discount_total']         = $after_discount_total;
-        $summary['quantity']                     = $quantity;
-        $summary['totalAmount']                  = $total ;
-        $summary['totalAmountDeliveryNotCharge'] = $total ;
-        $summary['product_type_id']              = $product_type_id;
-
+        
+        $productSubcription = ProductSubscription::where('id', $carts->subscriber_id)->first();
+        
+       
+        $summary['subTotal']                     = $carts->price;
+        $summary['discount']                     = 0;
+        $summary['after_discount_total']         = 0;
+        $summary['quantity']                     = 1;
+        $summary['totalAmount']                  = round($carts->price + $carts->service_charge, 2);
+        $summary['service_charge']               = $carts->service_charge;
+        $summary['totalAmountDeliveryNotCharge'] = 0 ;
+        $summary['product_type_id']              = $carts->type;
+        $summary['user_number']                  = $carts->user_number;
+        $summary['plan_name']                    = $productSubcription->title;
         return $summary;
     }
     

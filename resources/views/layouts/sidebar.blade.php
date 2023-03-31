@@ -2,150 +2,311 @@
 <header class="main-nav">
     <div class="logo-wrapper">
         <a href="{{ url('/admin/dashboard') }}">
-            <img class="img-fluid" src="{{ asset('shifti_logo.png') }}" alt="">
+            <img class="img-fluid" src="{{ asset('logo.png') }}" alt="">
+            <span class="logo-text"> For Internal Use Only </span>
+            <span class="logo-text-right">CMS </span>
         </a>
     </div>
     <div class="logo-icon-wrapper">
         <a href="{{ url('/admin/dashboard') }}">
-            <img class="img-fluid" src="{{ asset('shifti_logo.png') }}" alt="">
+            <img class="img-fluid" src="{{ asset('logo.png') }}" alt="">
+             <span class="logo-text"> For Internal Use Only </span>
+             <span class="logo-text-right">CMS </span>
         </a>
     </div>
+    
     <nav>
         <div class="main-navbar">
-      <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
-      <div id="mainnav">
-        <ul class="nav-menu custom-scrollbar">
-            <li class="back-btn">
-                <div class="mobile-back text-right">
-                    <span>Back</span>
-                    <i class="fa fa-angle-right pl-2"></i>
-                </div>
-            </li>
-            <li >
-                <a class="" href="{{ url('/admin/dashboard') }}">
-                    <i data-feather="home"></i>
-                    <span>Dashboard</span>
-                </a>
-             
-            </li>
-        
-            <li class="dropdown blog_list">
-                <a class="nav-link menu-title @if(isset($type) && $type==2) active @endif" href="#"><i data-feather="airplay"></i><span>Blog</span></a>
-                <ul class="nav-submenu menu-content blog_list_data"  @if(isset($type) && $type==2) style="display:block !important" @endif>
-                    <li><a href="{{ url('/admin/blog/category/tag/create') }}">New Category</a></li>
-                    <li><a href="{{ url('/admin/blog/category/tag') }}">Category list</a></li>
-                    <li><a href="{{ url('/admin/blog/tag/create') }}">New Tag</a></li>
-                    <li><a href="{{ url('/admin/blog/tag/show') }}">Tag List</a></li>
-                    <li><a href="{{ url('/admin/blog/create') }}">New setup</a></li>
-                    <li class="blog_list_data"><a href="{{ url('/admin/blog') }}">Blog list</a></li>
-                </ul>
-            </li>
+            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+            <div id="mainnav">
+                <ul class="nav-menu custom-scrollbar">
+                <li class="back-btn">
+                    <div class="mobile-back text-right">
+                        <span>Back</span>
+                        <i class="fa fa-angle-right pl-2"></i>
+                    </div>
+                </li>
+                <li style="height:30px">
+                    <a class="" href="{{ url('/admin/dashboard') }}"  class=" @if(isset($type) && $type==2) active @endif">
+                        @if(isset($type) && $type==1)
+                            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.4" d="M11.2603 0.5H13.9691C15.0909 0.5 15.9999 1.41668 15.9999 2.54797V5.27962C15.9999 6.41091 15.0909 7.32759 13.9691 7.32759H11.2603C10.1385 7.32759 9.22949 6.41091 9.22949 5.27962V2.54797C9.22949 1.41668 10.1385 0.5 11.2603 0.5Z" fill="#007AE5"/>
+                                <path d="M4.73959 9.67241C5.86141 9.67241 6.77041 10.5891 6.77041 11.7204V14.452C6.77041 15.5826 5.86141 16.5 4.73959 16.5H2.03082C0.909005 16.5 0 15.5826 0 14.452V11.7204C0 10.5891 0.909005 9.67241 2.03082 9.67241H4.73959ZM13.9692 9.67241C15.091 9.67241 16 10.5891 16 11.7204V14.452C16 15.5826 15.091 16.5 13.9692 16.5H11.2604C10.1386 16.5 9.22959 15.5826 9.22959 14.452V11.7204C9.22959 10.5891 10.1386 9.67241 11.2604 9.67241H13.9692ZM4.73959 0.5C5.86141 0.5 6.77041 1.41668 6.77041 2.54797V5.27962C6.77041 6.41091 5.86141 7.32759 4.73959 7.32759H2.03082C0.909005 7.32759 0 6.41091 0 5.27962V2.54797C0 1.41668 0.909005 0.5 2.03082 0.5H4.73959Z" fill="#007AE5"/>
+                            </svg>
+                        @else
+                            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path opacity="0.4" d="M11.2603 0.5H13.9691C15.0909 0.5 15.9999 1.41668 15.9999 2.54797V5.27962C15.9999 6.41091 15.0909 7.32759 13.9691 7.32759H11.2603C10.1385 7.32759 9.22949 6.41091 9.22949 5.27962V2.54797C9.22949 1.41668 10.1385 0.5 11.2603 0.5Z" fill="#9BA1CC"/>
+                                <path d="M4.73959 9.67241C5.86141 9.67241 6.77041 10.5891 6.77041 11.7204V14.452C6.77041 15.5826 5.86141 16.5 4.73959 16.5H2.03082C0.909005 16.5 0 15.5826 0 14.452V11.7204C0 10.5891 0.909005 9.67241 2.03082 9.67241H4.73959ZM13.9692 9.67241C15.091 9.67241 16 10.5891 16 11.7204V14.452C16 15.5826 15.091 16.5 13.9692 16.5H11.2604C10.1386 16.5 9.22959 15.5826 9.22959 14.452V11.7204C9.22959 10.5891 10.1386 9.67241 11.2604 9.67241H13.9692ZM4.73959 0.5C5.86141 0.5 6.77041 1.41668 6.77041 2.54797V5.27962C6.77041 6.41091 5.86141 7.32759 4.73959 7.32759H2.03082C0.909005 7.32759 0 6.41091 0 5.27962V2.54797C0 1.41668 0.909005 0.5 2.03082 0.5H4.73959Z" fill="#9BA1CC"/>
+                            </svg>
+                        @endif
+                        <!--<i data-feather="home"></i>-->
+                        <span>Dashboard</span>
+                    </a>
+                 
+                </li>
             
-          
-            <li class="dropdown">
-                <a class="nav-link menu-title product_menu_title" href="#"><i data-feather="airplay"></i><span>Product</span></a>
-                <ul class="nav-submenu menu-content product_submenu">
-                    <li><a href="{{ url('/admin/category/create') }}">New Category</a></li>
-                    <li><a href="{{ url('/admin/category/show') }}">Category list</a></li>
-                    <li><a href="{{ url('/admin/product/tag/create') }}">New Tag</a></li>
-                    <li><a href="{{ url('/admin/product/tag/show') }}">Tag List</a></li>
-                    <li><a href="{{ url('/admin/product/create') }}">New Product</a></li>
-                    <li><a href="{{ url('/admin/product') }}">Product list</a></li>
-                </ul>
-            </li>
-            <li class="dropdown order_menu">
-                <a class="nav-link menu-title order_menu_title" href="#"><i data-feather="airplay"></i><span>Order</span></a>
-                <ul class="nav-submenu menu-content order_submenu">
-                    <li><a href="{{ url('/order/list') }}">Order List</a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title customer_menu_title" href="#"><i data-feather="airplay"></i><span>Customer List</span></a>
-                <ul class="nav-submenu menu-content customer_submenu">
-                    <li><a href="{{ url('/customer/list') }}">Customer </a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title stories_menu_title" href="#"><i data-feather="airplay"></i><span>Stories</span></a>
-                <ul class="nav-submenu menu-content stories_submenu">
-                    <li><a href="{{ url('/admin/stories/create') }}">New Stories</a></li>
-                    <li><a href="{{ url('/admin/story') }}">Stories list</a></li>
-                    <li><a href="{{ url('/admin/stories/tag/create') }}">New Tag</a></li>
-                    <li><a href="{{ url('/admin/stories/tag/show') }}">Tag List</a></li>
-                </ul>
-            </li>
-            <!--<li class="dropdown">-->
-            <!--    <a class="nav-link menu-title" href="#"><i data-feather="airplay"></i><span>Pages</span></a>-->
-            <!--    <ul class="nav-submenu menu-content">-->
-            <!--        <li><a href="{{ url('/admin/pages/create') }}">New Page</a></li>-->
-            <!--        <li><a href="{{ url('/admin/pages') }}">Page list</a></li>-->
-            <!--    </ul>-->
-            <!--</li>-->
-            <li class="dropdown">
-                <a class="nav-link menu-title email_menu_title" href="#"><i data-feather="airplay"></i><span>Email History</span></a>
-                <ul class="nav-submenu menu-content email_submenu">
-                    <li><a href="{{ url('/email/history') }}">List</a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title job_menu_title" href="#"><i data-feather="airplay"></i><span>Job Listing</span></a>
-                <ul class="nav-submenu menu-content job_submenu">
-                    <li><a href="{{ url('/admin/joblist/create') }}">Add Job</a></li>
-                    <li><a href="{{ url('/admin/joblist') }}">Job List</a></li>
-                    <li><a href="{{ url('/admin/joblist/categories/create') }}">Add Category</a></li>
-                    <li><a href="{{ url('/admin/joblist/categories/show') }}">All Category</a></li>
-                    <li><a href="{{ url('/admin/joblist/locations/create') }}">Add Location</a></li>
-                    <li><a href="{{ url('/admin/joblist/locations/show') }}">All Location</a></li>
-                    <li><a href="{{ url('/admin/aply/joblist') }}">Apply Job List</a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title page_menu_title" href="#"><i data-feather="airplay"></i><span>Page Settings</span></a>
-                <ul class="nav-submenu menu-content page_submenu">
-                    <li><a href="{{ url('/admin/home') }}">Home</a></li>
-                    <li><a href="{{ url('/admin/about') }}">About</a></li>
-                    <li><a href="{{ url('/admin/contact') }}">Contact</a></li>
-                    <li><a href="{{ url('/admin/faqs') }}">FAQ</a></li>
-                    <li><a href="{{ url('/admin/terms') }}">Terms</a></li>
-                    <li><a href="{{ url('/admin/product/page/create') }}">Product Page</a></li>
-                    <li><a href="{{ url('/admin/career-listing') }}">Career Listing</a></li>
-                    <li><a href="{{ url('/admin/stories') }}">Stories</a></li>
-                </ul>
-            </li>
-            <li>
-                <a class="nav-link menu-title" href="{{ url('/admin/setting') }}"><i data-feather="airplay"></i><span>Settings</span></a>
-            </li>
-            <li>
-                <a class="nav-link menu-title" href="{{ url('/payments') }}"><i data-feather="airplay"></i><span>Payment Method</span></a>
-            </li>
-            <li>
-                <a class="nav-link menu-title" href="{{ url('/transaction/history') }}"><i data-feather="airplay"></i><span>Transaction History</span></a>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title team_menu_title" href="#"><i data-feather="airplay"></i><span>Team Setup</span></a>
-                <ul class="nav-submenu menu-content team_submenu">
-                  <li><a href="{{ url('/admin/team/create') }}">Add Team</a></li>
-                  <li><a href="{{ url('/admin/team') }}">Team</a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title team_menu_title" href="#"><i data-feather="airplay"></i><span>User Setup</span></a>
-                <ul class="nav-submenu menu-content team_submenu">
-                  <li><a href="{{ url('/admin/user/setup') }}">Add User</a></li>
-                  <li><a href="{{ url('/admin/userlist') }}">User List</a></li>
-                </ul>
-            </li>
-            <li class="dropdown">
-                <a class="nav-link menu-title team_menu_title" href="#"><i data-feather="airplay"></i><span>Partner</span></a>
-                <ul class="nav-submenu menu-content team_submenu">
-                  <li><a href="{{ url('/admin/partner/create') }}">Add</a></li>
-                  <li><a href="{{ url('/admin/partner') }}">List</a></li>
-                </ul>
-            </li>
+                <li class="dropdown blog_list">
+                    <a class="nav-link menu-title @if(isset($type) && $type==2) active @endif" href="{{ url('/admin/blog') }}">
+                        @if(isset($type) && $type==2)
+                            <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 13.1799C3.68538 13.1799 0 13.8602 0 16.5812C0 19.3032 3.66237 20.0075 8 20.0075C12.3146 20.0075 16 19.3282 16 16.6062C16 13.8842 12.3386 13.1799 8 13.1799Z" fill="#007AE5"/>
+                                <path opacity="0.4" d="M8.00004 10.588C10.9391 10.588 13.294 8.23209 13.294 5.29398C13.294 2.35588 10.9391 0 8.00004 0C5.06194 0 2.70605 2.35588 2.70605 5.29398C2.70605 8.23209 5.06194 10.588 8.00004 10.588Z" fill="#007AE5"/>
+                            </svg>
+                        
+                        @else
+                            <svg width="16" height="21" viewBox="0 0 16 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 13.1799C3.68538 13.1799 0 13.8602 0 16.5812C0 19.3032 3.66237 20.0075 8 20.0075C12.3146 20.0075 16 19.3282 16 16.6062C16 13.8842 12.3386 13.1799 8 13.1799Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M8.00004 10.588C10.9391 10.588 13.294 8.23209 13.294 5.29398C13.294 2.35588 10.9391 0 8.00004 0C5.06194 0 2.70605 2.35588 2.70605 5.29398C2.70605 8.23209 5.06194 10.588 8.00004 10.588Z" fill="#9BA1CC"/>
+                        </svg>
+                        @endif
+                        <span>Blog</span></a>
+                    <!--<ul class="nav-submenu menu-content blog_list_data"  @if(isset($type) && $type==2) style="display:block !important" @endif>-->
+                    <!--    <li><a href="{{ url('/admin/blog/category/tag/create') }}">New Category</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/blog/category/tag') }}">Category list</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/blog/tag/create') }}">New Tag</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/blog/tag/show') }}">Tag List</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/blog/create') }}">New setup</a></li>-->
+                    <!--    <li class="blog_list_data"><a href="{{ url('/admin/blog') }}">Blog list</a></li>-->
+                    <!--</ul>-->
+                </li>
+                
+              
+                <li class="dropdown">
+                    <a class="nav-link menu-title product_menu_title" href="{{ url('/admin/product') }}">
+                         @if(isset($type) && $type==3)
+                            <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.6004 14.9133C11.1965 14.9044 10.8716 14.5667 10.8716 14.1578C10.8628 13.7489 11.1877 13.412 11.5917 13.4031H11.6004C12.0132 13.4031 12.3469 13.7409 12.3469 14.1578C12.3469 14.5755 12.0132 14.9133 11.6004 14.9133ZM8.01756 11.6422C7.61361 11.6609 7.27991 11.34 7.26235 10.932C7.26235 10.5231 7.57849 10.1853 7.98244 10.1667C8.37761 10.1667 8.70253 10.4787 8.71131 10.8778C8.72887 11.2875 8.41273 11.6253 8.01756 11.6422ZM8.01756 14.8689C7.61361 14.8875 7.27991 14.5667 7.26235 14.1578C7.26235 13.7489 7.57849 13.412 7.98244 13.3933C8.37761 13.3933 8.70253 13.7053 8.71131 14.1053C8.72887 14.5142 8.41273 14.852 8.01756 14.8689ZM4.40834 11.6422C4.00439 11.6609 3.67069 11.34 3.65313 10.932C3.65313 10.5231 3.96926 10.1853 4.37322 10.1667C4.76839 10.1667 5.0933 10.4787 5.10209 10.8778C5.11965 11.2875 4.80351 11.6253 4.40834 11.6422ZM4.39956 14.8689C3.99561 14.8875 3.66191 14.5667 3.64435 14.1578C3.64435 13.7489 3.96048 13.412 4.36443 13.3933C4.7596 13.3933 5.08452 13.7053 5.0933 14.1053C5.11087 14.5142 4.79473 14.852 4.39956 14.8689ZM10.8804 10.9231C10.8804 10.5142 11.1965 10.1853 11.6004 10.1764C11.9956 10.1764 12.3117 10.4955 12.3293 10.8875C12.3381 11.2964 12.022 11.6342 11.6268 11.6422C11.2228 11.6511 10.8891 11.34 10.8804 10.932V10.9231ZM0 7.06177V13.8289C0 16.6378 1.77387 18.3889 4.55763 18.3889H11.4336C14.2437 18.3889 16 16.6733 16 13.8831V7.06177H0Z" fill="#007AE5"/>
+                                <path opacity="0.4" d="M0.00292969 7.06177C0.0143457 6.53999 0.0582535 5.50444 0.1408 5.1711C0.562315 3.29644 1.99371 2.10532 4.03981 1.93555H11.9608C13.9893 2.11421 15.4383 3.31332 15.8598 5.1711C15.9415 5.49555 15.9854 6.5391 15.9968 7.06177H0.00292969Z" fill="#007AE5"/>
+                                <path d="M4.71524 4.69108C5.10163 4.69108 5.39142 4.39864 5.39142 4.00664V1.29642C5.39142 0.904417 5.10163 0.611084 4.71524 0.611084C4.32885 0.611084 4.03906 0.904417 4.03906 1.29642V4.00664C4.03906 4.39864 4.32885 4.69108 4.71524 4.69108Z" fill="#007AE5"/>
+                                <path d="M11.2846 4.69108C11.6622 4.69108 11.9608 4.39864 11.9608 4.00664V1.29642C11.9608 0.904417 11.6622 0.611084 11.2846 0.611084C10.8982 0.611084 10.6084 0.904417 10.6084 1.29642V4.00664C10.6084 4.39864 10.8982 4.69108 11.2846 4.69108Z" fill="#007AE5"/>
+                            </svg>
+                        @else
+                            <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.6004 14.9133C11.1965 14.9044 10.8716 14.5667 10.8716 14.1578C10.8628 13.7489 11.1877 13.412 11.5917 13.4031H11.6004C12.0132 13.4031 12.3469 13.7409 12.3469 14.1578C12.3469 14.5755 12.0132 14.9133 11.6004 14.9133ZM8.01756 11.6422C7.61361 11.6609 7.27991 11.34 7.26235 10.932C7.26235 10.5231 7.57849 10.1853 7.98244 10.1667C8.37761 10.1667 8.70253 10.4787 8.71131 10.8778C8.72887 11.2875 8.41273 11.6253 8.01756 11.6422ZM8.01756 14.8689C7.61361 14.8875 7.27991 14.5667 7.26235 14.1578C7.26235 13.7489 7.57849 13.412 7.98244 13.3933C8.37761 13.3933 8.70253 13.7053 8.71131 14.1053C8.72887 14.5142 8.41273 14.852 8.01756 14.8689ZM4.40834 11.6422C4.00439 11.6609 3.67069 11.34 3.65313 10.932C3.65313 10.5231 3.96926 10.1853 4.37322 10.1667C4.76839 10.1667 5.0933 10.4787 5.10209 10.8778C5.11965 11.2875 4.80351 11.6253 4.40834 11.6422ZM4.39956 14.8689C3.99561 14.8875 3.66191 14.5667 3.64435 14.1578C3.64435 13.7489 3.96048 13.412 4.36443 13.3933C4.7596 13.3933 5.08452 13.7053 5.0933 14.1053C5.11087 14.5142 4.79473 14.852 4.39956 14.8689ZM10.8804 10.9231C10.8804 10.5142 11.1965 10.1853 11.6004 10.1764C11.9956 10.1764 12.3117 10.4955 12.3293 10.8875C12.3381 11.2964 12.022 11.6342 11.6268 11.6422C11.2228 11.6511 10.8891 11.34 10.8804 10.932V10.9231ZM0 7.06177V13.8289C0 16.6378 1.77387 18.3889 4.55763 18.3889H11.4336C14.2437 18.3889 16 16.6733 16 13.8831V7.06177H0Z" fill="#9BA1CC"/>
+                                <path opacity="0.4" d="M0.00292969 7.06177C0.0143457 6.53999 0.0582535 5.50444 0.1408 5.1711C0.562315 3.29644 1.99371 2.10532 4.03981 1.93555H11.9608C13.9893 2.11421 15.4383 3.31332 15.8598 5.1711C15.9415 5.49555 15.9854 6.5391 15.9968 7.06177H0.00292969Z" fill="#9BA1CC"/>
+                                <path d="M4.71524 4.69108C5.10163 4.69108 5.39142 4.39864 5.39142 4.00664V1.29642C5.39142 0.904417 5.10163 0.611084 4.71524 0.611084C4.32885 0.611084 4.03906 0.904417 4.03906 1.29642V4.00664C4.03906 4.39864 4.32885 4.69108 4.71524 4.69108Z" fill="#9BA1CC"/>
+                                <path d="M11.2846 4.69108C11.6622 4.69108 11.9608 4.39864 11.9608 4.00664V1.29642C11.9608 0.904417 11.6622 0.611084 11.2846 0.611084C10.8982 0.611084 10.6084 0.904417 10.6084 1.29642V4.00664C10.6084 4.39864 10.8982 4.69108 11.2846 4.69108Z" fill="#9BA1CC"/>
+                            </svg>
+                        @endif
+                        <span>Product</span>
+                    </a>
+                    <!--<ul class="nav-submenu menu-content product_submenu">-->
+                    <!--    <li><a href="{{ url('/admin/category/create') }}">New Category</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/category/show') }}">Category list</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/product/tag/create') }}">New Tag</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/product/tag/show') }}">Tag List</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/product/create') }}">New Product</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/product') }}">Product list</a></li>-->
+                    <!--</ul>-->
+                </li>
+                <li class="dropdown order_menu">
+                    <a class="nav-link menu-title order_menu_title" href="{{ url('/order/list') }}">
+                        <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                             <path d="M5.155 16.0625C5.94288 16.0625 6.58838 16.7217 6.58838 17.5361C6.58838 18.3408 5.94288 19 5.155 19C4.35762 19 3.71212 18.3408 3.71212 17.5361C3.71212 16.7217 4.35762 16.0625 5.155 16.0625ZM15.8342 16.0625C16.6221 16.0625 17.2676 16.7217 17.2676 17.5361C17.2676 18.3408 16.6221 19 15.8342 19C15.0368 19 14.3913 18.3408 14.3913 17.5361C14.3913 16.7217 15.0368 16.0625 15.8342 16.0625ZM0.836053 0.00830139L3.10004 0.356346C3.42279 0.415484 3.6601 0.68597 3.68858 1.01559L3.86894 3.18724C3.89742 3.49844 4.14423 3.73112 4.44799 3.73112H17.2677C17.8468 3.73112 18.2265 3.93471 18.6062 4.38067C18.9859 4.82663 19.0524 5.46649 18.9669 6.04721L18.0651 12.407C17.8943 13.6295 16.8691 14.5302 15.6635 14.5302H5.30707C4.04455 14.5302 3.00037 13.5423 2.89595 12.2626L2.02263 1.69423L0.589246 1.44217C0.209542 1.3743 -0.0562511 0.996205 0.0101971 0.608412C0.0766453 0.211893 0.446857 -0.0508371 0.836053 0.00830139ZM14.1447 7.31724H11.5152C11.1165 7.31724 10.8033 7.63717 10.8033 8.04435C10.8033 8.44184 11.1165 8.77146 11.5152 8.77146H14.1447C14.5434 8.77146 14.8566 8.44184 14.8566 8.04435C14.8566 7.63717 14.5434 7.31724 14.1447 7.31724Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Order</span></a>
+                    <!--<ul class="nav-submenu menu-content order_submenu">-->
+                    <!--    <li><a href="{{ url('/order/list') }}">Order List</a></li>-->
+                    <!--</ul>-->
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title customer_menu_title" href="{{ url('/customer/list') }}">
+                        <svg width="23" height="17" viewBox="0 0 23 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M11.2056 10.7866C14.7171 10.7866 17.7155 11.3433 17.7155 13.571C17.7155 15.7979 14.7364 16.3749 11.2056 16.3749C7.69398 16.3749 4.69558 15.8181 4.69558 13.5913C4.69558 11.3635 7.67474 10.7866 11.2056 10.7866ZM16.8201 9.4451C18.1626 9.42021 19.6059 9.60456 20.1393 9.73544C21.2692 9.95757 22.0123 10.411 22.3202 11.0701C22.5805 11.6111 22.5805 12.2388 22.3202 12.7789C21.8492 13.8011 20.3308 14.1292 19.7406 14.214C19.6188 14.2324 19.5207 14.1264 19.5335 14.0039C19.835 11.1715 17.4368 9.82853 16.8165 9.51976C16.7899 9.50593 16.7844 9.48473 16.7871 9.47183C16.789 9.46261 16.8 9.44786 16.8201 9.4451ZM5.69599 9.44547C5.71616 9.44823 5.72624 9.46298 5.72807 9.47128C5.73082 9.4851 5.72532 9.50538 5.69966 9.52013C5.07835 9.8289 2.68019 11.1718 2.98167 14.0033C2.9945 14.1268 2.89737 14.2319 2.77549 14.2144C2.18534 14.1296 0.666896 13.8015 0.195876 12.7793C-0.0652921 12.2382 -0.0652921 11.6115 0.195876 11.0704C0.50378 10.4114 1.24605 9.95794 2.37595 9.73488C2.9102 9.60492 4.35258 9.42058 5.69599 9.44547ZM11.2056 0C13.5964 0 15.5135 1.92637 15.5135 4.33202C15.5135 6.73676 13.5964 8.66497 11.2056 8.66497C8.81471 8.66497 6.89764 6.73676 6.89764 4.33202C6.89764 1.92637 8.81471 0 11.2056 0ZM17.0538 0.722434C19.3631 0.722434 21.1766 2.9078 20.559 5.34203C20.142 6.98082 18.6327 8.06936 16.9512 8.02512C16.7826 8.02051 16.6167 8.00484 16.4563 7.97719C16.3399 7.95691 16.2813 7.82511 16.3473 7.72741C16.9887 6.77805 17.3544 5.63605 17.3544 4.41018C17.3544 3.13085 16.9548 1.93817 16.2611 0.960234C16.2391 0.929818 16.2226 0.882811 16.2446 0.847786C16.263 0.819213 16.2969 0.804466 16.3289 0.797092C16.5626 0.749163 16.8027 0.722434 17.0538 0.722434ZM5.46094 0.722342C5.71203 0.722342 5.95212 0.749071 6.18672 0.797C6.21787 0.804374 6.2527 0.820043 6.27102 0.847694C6.2921 0.882719 6.27652 0.929726 6.25453 0.960142C5.56083 1.93807 5.16129 3.13076 5.16129 4.41009C5.16129 5.63596 5.52692 6.77796 6.16839 7.72731C6.23437 7.82502 6.17572 7.95682 6.05934 7.9771C5.89806 8.00567 5.73311 8.02042 5.56449 8.02503C3.88293 8.06927 2.37366 6.98073 1.9567 5.34194C1.33815 2.90771 3.15166 0.722342 5.46094 0.722342Z" fill="#9BA1CC"/>
+                        </svg>
+                    <span>Customers</span></a>
+                    <!--<ul class="nav-submenu menu-content customer_submenu">-->
+                    <!--    <li><a href="{{ url('/customer/list') }}">Customer </a></li>-->
+                    <!--</ul>-->
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title stories_menu_title" href="{{ url('/admin/story') }}">
+                        <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.3009 16.2454C17.8682 16.2454 18.3296 16.7128 18.3296 17.2875C18.3296 17.8633 17.8682 18.3296 17.3009 18.3296H11.4862C10.9189 18.3296 10.4575 17.8633 10.4575 17.2875C10.4575 16.7128 10.9189 16.2454 11.4862 16.2454H17.3009ZM13.2685 0.711864L14.7705 1.90504C15.3864 2.38669 15.797 3.02159 15.9375 3.68933C16.0996 4.42385 15.9267 5.14523 15.4404 5.76918L6.49316 17.3397C6.08253 17.8651 5.47741 18.1607 4.82905 18.1716L1.26311 18.2154C1.0686 18.2154 0.906514 18.0841 0.86329 17.898L0.0528488 14.3841C-0.0876278 13.7383 0.0528488 13.0705 0.463473 12.5561L6.80653 4.34613C6.91459 4.21477 7.10909 4.19397 7.23877 4.29139L9.90782 6.41503C10.0807 6.55733 10.3184 6.63396 10.567 6.60112C11.0965 6.53544 11.4531 6.05379 11.399 5.5393C11.3666 5.27658 11.2369 5.05765 11.064 4.89345C11.01 4.84967 8.47064 2.81361 8.47064 2.81361C8.30855 2.68225 8.27613 2.44142 8.4058 2.27832L9.41075 0.974582C10.3401 -0.218594 11.9609 -0.32806 13.2685 0.711864Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Customer Stories</span></a>
+                    <!--<ul class="nav-submenu menu-content stories_submenu">-->
+                    <!--    <li><a href="{{ url('/admin/stories/create') }}">New Stories</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/story') }}">Stories list</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/stories/tag/create') }}">New Tag</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/stories/tag/show') }}">Tag List</a></li>-->
+                    <!--</ul>-->
+                </li>
+                <!--<li class="dropdown">-->
+                <!--    <a class="nav-link menu-title" href="#"><i data-feather="airplay"></i><span>Pages</span></a>-->
+                <!--    <ul class="nav-submenu menu-content">-->
+                <!--        <li><a href="{{ url('/admin/pages/create') }}">New Page</a></li>-->
+                <!--        <li><a href="{{ url('/admin/pages') }}">Page list</a></li>-->
+                <!--    </ul>-->
+                <!--</li>-->
+                <li >
+                    <a class="nav-link menu-title email_menu_title" href="{{ url('/email/history') }}">
+                        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M19.5557 12.6531C19.5557 15.3812 17.3655 17.591 14.6374 17.6007H14.6277H4.93782C2.21957 17.6007 0 15.4007 0 12.6727V12.6629C0 12.6629 0.00586671 8.33524 0.013689 6.15869C0.0146668 5.74998 0.484004 5.52118 0.803739 5.7754C3.12696 7.61853 7.28157 10.9792 7.33339 11.0232C8.02762 11.5795 8.90762 11.8934 9.80719 11.8934C10.7067 11.8934 11.5868 11.5795 12.281 11.0124C12.3328 10.9782 16.3945 7.71826 18.7529 5.84482C19.0737 5.58962 19.5449 5.81842 19.5459 6.22616C19.5557 8.38609 19.5557 12.6531 19.5557 12.6531Z" fill="#9BA1CC"/>
+                            <path d="M19.0437 2.6146C18.1969 1.01885 16.5308 0 14.6964 0H4.93813C3.10381 0 1.43766 1.01885 0.590899 2.6146C0.401208 2.97149 0.491165 3.41638 0.806989 3.66865L8.06704 9.47572C8.57549 9.88639 9.1915 10.0907 9.8075 10.0907C9.81141 10.0907 9.81435 10.0907 9.81728 10.0907C9.82021 10.0907 9.82412 10.0907 9.82706 10.0907C10.4431 10.0907 11.0591 9.88639 11.5675 9.47572L18.8276 3.66865C19.1434 3.41638 19.2334 2.97149 19.0437 2.6146Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Email inquirys</span></a>
+                        <!--<ul class="nav-submenu menu-content email_submenu">-->
+                        <!--    <li><a href="{{ url('/email/history') }}">List</a></li>-->
+                        <!--</ul>-->
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title job_menu_title" href="{{ url('/admin/joblist') }}">
+                        <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M18.778 6.96809H17.5952V5.81173C17.5952 5.31805 17.1993 4.91553 16.7115 4.91553C16.2246 4.91553 15.8277 5.31805 15.8277 5.81173V6.96809H14.647C14.1591 6.96809 13.7632 7.37061 13.7632 7.86429C13.7632 8.35797 14.1591 8.7605 14.647 8.7605H15.8277V9.91788C15.8277 10.4116 16.2246 10.8141 16.7115 10.8141C17.1993 10.8141 17.5952 10.4116 17.5952 9.91788V8.7605H18.778C19.2648 8.7605 19.6617 8.35797 19.6617 7.86429C19.6617 7.37061 19.2648 6.96809 18.778 6.96809Z" fill="#9BA1CC"/>
+                            <path d="M7.3732 12.304C3.39582 12.304 0 12.9398 0 15.4804C0 18.02 3.37516 18.6788 7.3732 18.6788C11.3496 18.6788 14.7464 18.0429 14.7464 15.5023C14.7464 12.9618 11.3712 12.304 7.3732 12.304Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M7.37336 9.88422C10.0814 9.88422 12.2521 7.68552 12.2521 4.94261C12.2521 2.19971 10.0814 0 7.37336 0C4.66536 0 2.49463 2.19971 2.49463 4.94261C2.49463 7.68552 4.66536 9.88422 7.37336 9.88422Z" fill="#9BA1CC"/>
+                        </svg>
+                    <span>Job Listing</span></a>
+                    <!--<ul class="nav-submenu menu-content job_submenu">-->
+                    <!--    <li><a href="{{ url('/admin/joblist/create') }}">Add Job</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/joblist') }}">Job List</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/joblist/categories/create') }}">Add Category</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/joblist/categories/show') }}">All Category</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/joblist/locations/create') }}">Add Location</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/joblist/locations/show') }}">All Location</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/aply/joblist') }}">Apply Job List</a></li>-->
+                    <!--</ul>-->
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title page_menu_title" href="{{ url('/admin/pages') }}">
+                        <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.78139 0C9.01318 0 9.19148 0.18909 9.19148 0.414196V3.31357C9.19148 4.96135 10.5377 6.31199 12.1691 6.32099C12.8467 6.32099 13.3816 6.33 13.7917 6.33L13.9436 6.32933C14.2176 6.32725 14.5866 6.32099 14.9061 6.32099C15.1289 6.32099 15.3073 6.50108 15.3073 6.72619V13.9656C15.3073 16.1987 13.5153 18.0085 11.3044 18.0085H4.20793C1.89 18.0085 0 16.1086 0 13.7675V4.06092C0 1.82787 1.80085 0 4.02072 0H8.78139ZM9.7353 11.6155H4.88548C4.51996 11.6155 4.21685 11.9126 4.21685 12.2818C4.21685 12.651 4.51996 12.9571 4.88548 12.9571H9.7353C10.1008 12.9571 10.4039 12.651 10.4039 12.2818C10.4039 11.9126 10.1008 11.6155 9.7353 11.6155ZM7.89879 7.11337H4.88548C4.51996 7.11337 4.21685 7.41951 4.21685 7.78869C4.21685 8.15786 4.51996 8.45501 4.88548 8.45501H7.89879C8.26431 8.45501 8.56742 8.15786 8.56742 7.78869C8.56742 7.41951 8.26431 7.11337 7.89879 7.11337ZM10.4906 0.815786C10.4906 0.427703 10.9569 0.235011 11.2234 0.515044C12.1871 1.52712 13.8712 3.29646 14.8126 4.28513C15.073 4.55796 14.8822 5.01087 14.5069 5.01177C13.774 5.01448 12.9102 5.01177 12.2888 5.00547C11.3028 5.00547 10.4906 4.18518 10.4906 3.18931V0.815786Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Pages</span>
+                    </a>
+                    <!--<ul class="nav-submenu menu-content page_submenu">-->
+                    <!--    <li><a href="{{ url('/admin/pages') }}">Home</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/about') }}">About</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/contact') }}">Contact</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/faqs') }}">FAQ</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/terms') }}">Terms</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/product/page/create') }}">Product Page</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/career-listing') }}">Career Listing</a></li>-->
+                    <!--    <li><a href="{{ url('/admin/stories') }}">Stories</a></li>-->
+                    <!--</ul>-->
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title page_menu_title page_settings_menu" href="#">
+                        <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.78139 0C9.01318 0 9.19148 0.18909 9.19148 0.414196V3.31357C9.19148 4.96135 10.5377 6.31199 12.1691 6.32099C12.8467 6.32099 13.3816 6.33 13.7917 6.33L13.9436 6.32933C14.2176 6.32725 14.5866 6.32099 14.9061 6.32099C15.1289 6.32099 15.3073 6.50108 15.3073 6.72619V13.9656C15.3073 16.1987 13.5153 18.0085 11.3044 18.0085H4.20793C1.89 18.0085 0 16.1086 0 13.7675V4.06092C0 1.82787 1.80085 0 4.02072 0H8.78139ZM9.7353 11.6155H4.88548C4.51996 11.6155 4.21685 11.9126 4.21685 12.2818C4.21685 12.651 4.51996 12.9571 4.88548 12.9571H9.7353C10.1008 12.9571 10.4039 12.651 10.4039 12.2818C10.4039 11.9126 10.1008 11.6155 9.7353 11.6155ZM7.89879 7.11337H4.88548C4.51996 7.11337 4.21685 7.41951 4.21685 7.78869C4.21685 8.15786 4.51996 8.45501 4.88548 8.45501H7.89879C8.26431 8.45501 8.56742 8.15786 8.56742 7.78869C8.56742 7.41951 8.26431 7.11337 7.89879 7.11337ZM10.4906 0.815786C10.4906 0.427703 10.9569 0.235011 11.2234 0.515044C12.1871 1.52712 13.8712 3.29646 14.8126 4.28513C15.073 4.55796 14.8822 5.01087 14.5069 5.01177C13.774 5.01448 12.9102 5.01177 12.2888 5.00547C11.3028 5.00547 10.4906 4.18518 10.4906 3.18931V0.815786Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Page Setup</span>
+                    </a>
+                    <ul class="nav-submenu menu-content page_submenu">
+                        <li><a href="{{ url('/admin/home') }}">Home</a></li>
+                        <li><a href="{{ url('/admin/about') }}">About</a></li>
+                        <li><a href="{{ url('/admin/contact') }}">Contact</a></li>
+                        <li><a href="{{ url('/admin/faqs') }}">FAQ</a></li>
+                        <li><a href="{{ url('/admin/terms') }}">Terms</a></li>
+                        <li><a href="{{ url('/admin/product/page/create') }}">Product Page</a></li>
+                        <li><a href="{{ url('/admin/career-listing') }}">Career Listing</a></li>
+                        <li><a href="{{ url('/admin/stories') }}">Stories</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="nav-link global_setting menu-title" href="{{ url('/admin/setting') }}">
+                        <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M6.46663 10.7554H1.20622C0.540441 10.7554 0 11.2863 0 11.9404C0 12.5937 0.540441 13.1255 1.20622 13.1255H6.46663C7.1324 13.1255 7.67285 12.5937 7.67285 11.9404C7.67285 11.2863 7.1324 10.7554 6.46663 10.7554Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M16.0001 3.0919C16.0001 2.43868 15.4596 1.90771 14.7948 1.90771H9.53434C8.86857 1.90771 8.32812 2.43868 8.32812 3.0919C8.32812 3.746 8.86857 4.27696 9.53434 4.27696H14.7948C15.4596 4.27696 16.0001 3.746 16.0001 3.0919Z" fill="#9BA1CC"/>
+                            <path d="M5.50219 3.09176C5.50219 4.5851 4.27109 5.79549 2.7511 5.79549C1.23199 5.79549 0 4.5851 0 3.09176C0 1.5993 1.23199 0.388916 2.7511 0.388916C4.27109 0.388916 5.50219 1.5993 5.50219 3.09176Z" fill="#9BA1CC"/>
+                            <path d="M15.9998 11.9083C15.9998 13.4008 14.7686 14.6112 13.2487 14.6112C11.7296 14.6112 10.4976 13.4008 10.4976 11.9083C10.4976 10.415 11.7296 9.20459 13.2487 9.20459C14.7686 9.20459 15.9998 10.415 15.9998 11.9083Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Settings</span></a>
+                </li>
+                <li>
+                    <a class="nav-link menu-title payment_stripe" href="{{ url('/payments') }}">
+                        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M14.7407 0H5.35702C1.93745 0 0 1.93745 0 5.35702V14.7318C0 18.1514 1.93745 20.0888 5.35702 20.0888H14.7407C18.1603 20.0888 20.0888 18.1514 20.0888 14.7318V5.35702C20.0888 1.93745 18.1603 0 14.7407 0Z" fill="#9BA1CC"/>
+                            <path d="M5.39235 7.40161C4.937 7.40161 4.56201 7.7766 4.56201 8.24088V15.1425C4.56201 15.5978 4.937 15.9728 5.39235 15.9728C5.85662 15.9728 6.23161 15.5978 6.23161 15.1425V8.24088C6.23161 7.7766 5.85662 7.40161 5.39235 7.40161Z" fill="#9BA1CC"/>
+                            <path d="M10.0798 4.10718C9.6245 4.10718 9.24951 4.48217 9.24951 4.94644V15.1426C9.24951 15.598 9.6245 15.973 10.0798 15.973C10.5441 15.973 10.9191 15.598 10.9191 15.1426V4.94644C10.9191 4.48217 10.5441 4.10718 10.0798 4.10718Z" fill="#9BA1CC"/>
+                            <path d="M14.705 11.0444C14.2407 11.0444 13.8657 11.4194 13.8657 11.8837V15.1425C13.8657 15.5979 14.2407 15.9729 14.6961 15.9729C15.1603 15.9729 15.5353 15.5979 15.5353 15.1425V11.8837C15.5353 11.4194 15.1603 11.0444 14.705 11.0444Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Payments/Stripe Setup</span></a>
+                </li>
+                <li>
+                    <a class="nav-link menu-title transaction_history" href="{{ url('/transaction/history') }}">
+                        <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M6.46663 10.7552H1.20622C0.540441 10.7552 0 11.2862 0 11.9403C0 12.5935 0.540441 13.1254 1.20622 13.1254H6.46663C7.1324 13.1254 7.67285 12.5935 7.67285 11.9403C7.67285 11.2862 7.1324 10.7552 6.46663 10.7552Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M16.0001 3.09178C16.0001 2.43856 15.4596 1.90759 14.7948 1.90759H9.53434C8.86857 1.90759 8.32812 2.43856 8.32812 3.09178C8.32812 3.74588 8.86857 4.27684 9.53434 4.27684H14.7948C15.4596 4.27684 16.0001 3.74588 16.0001 3.09178Z" fill="#9BA1CC"/>
+                            <path d="M5.50219 3.09176C5.50219 4.5851 4.27109 5.79549 2.7511 5.79549C1.23199 5.79549 0 4.5851 0 3.09176C0 1.5993 1.23199 0.388916 2.7511 0.388916C4.27109 0.388916 5.50219 1.5993 5.50219 3.09176Z" fill="#9BA1CC"/>
+                            <path d="M15.9998 11.9083C15.9998 13.4008 14.7686 14.6112 13.2487 14.6112C11.7296 14.6112 10.4976 13.4008 10.4976 11.9083C10.4976 10.415 11.7296 9.20459 13.2487 9.20459C14.7686 9.20459 15.9998 10.415 15.9998 11.9083Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Transaction History</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link menu-title subscriber_list" href="{{ url('/admin/subscriber/list') }}">
+                        <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M6.46663 10.7552H1.20622C0.540441 10.7552 0 11.2862 0 11.9403C0 12.5935 0.540441 13.1254 1.20622 13.1254H6.46663C7.1324 13.1254 7.67285 12.5935 7.67285 11.9403C7.67285 11.2862 7.1324 10.7552 6.46663 10.7552Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M16.0001 3.09178C16.0001 2.43856 15.4596 1.90759 14.7948 1.90759H9.53434C8.86857 1.90759 8.32812 2.43856 8.32812 3.09178C8.32812 3.74588 8.86857 4.27684 9.53434 4.27684H14.7948C15.4596 4.27684 16.0001 3.74588 16.0001 3.09178Z" fill="#9BA1CC"/>
+                            <path d="M5.50219 3.09176C5.50219 4.5851 4.27109 5.79549 2.7511 5.79549C1.23199 5.79549 0 4.5851 0 3.09176C0 1.5993 1.23199 0.388916 2.7511 0.388916C4.27109 0.388916 5.50219 1.5993 5.50219 3.09176Z" fill="#9BA1CC"/>
+                            <path d="M15.9998 11.9083C15.9998 13.4008 14.7686 14.6112 13.2487 14.6112C11.7296 14.6112 10.4976 13.4008 10.4976 11.9083C10.4976 10.415 11.7296 9.20459 13.2487 9.20459C14.7686 9.20459 15.9998 10.415 15.9998 11.9083Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Subscriber List</span>
+                    </a>
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title team_menu_title" href="#">
+                        <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.6228 0.494812C16.195 0.057583 15.5618 -0.104132 14.9714 0.066995L1.20424 4.04484C0.581335 4.21768 0.139828 4.71138 0.0208947 5.3377C-0.100605 5.97601 0.323789 6.78715 0.87824 7.12598L5.18294 9.75449C5.62444 10.0249 6.1943 9.95727 6.55965 9.59106L11.489 4.66175C11.7371 4.40421 12.1478 4.40421 12.3959 4.66175C12.6441 4.90903 12.6441 5.31203 12.3959 5.56872L7.45807 10.498C7.09186 10.8642 7.02341 11.4324 7.29293 11.8748L9.92315 16.1957C10.2312 16.7082 10.7617 17 11.3435 17C11.412 17 11.489 17 11.5574 16.9906C12.2248 16.9059 12.7553 16.4515 12.9521 15.8098L17.0335 2.14619C17.2132 1.56436 17.0506 0.931186 16.6228 0.494812Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M6.37669 14.6675C6.62653 14.9182 6.62653 15.3247 6.37669 15.5754L5.20789 16.7433C5.08297 16.8691 4.91869 16.9315 4.75441 16.9315C4.59012 16.9315 4.42584 16.8691 4.30092 16.7433C4.05022 16.4926 4.05022 16.087 4.30092 15.8363L5.46886 14.6675C5.71956 14.4177 6.12599 14.4177 6.37669 14.6675ZM5.70613 11.4264C5.95597 11.6771 5.95597 12.0835 5.70613 12.3342L4.53733 13.5022C4.41241 13.6279 4.24813 13.6904 4.08384 13.6904C3.91956 13.6904 3.75528 13.6279 3.63036 13.5022C3.37966 13.2515 3.37966 12.8459 3.63036 12.5952L4.7983 11.4264C5.049 11.1765 5.45543 11.1765 5.70613 11.4264ZM2.48792 10.4061C2.73776 10.6568 2.73776 11.0633 2.48792 11.314L1.31912 12.4819C1.1942 12.6077 1.02991 12.6701 0.865633 12.6701C0.701351 12.6701 0.537069 12.6077 0.412147 12.4819C0.161446 12.2312 0.161446 11.8256 0.412147 11.5749L1.58009 10.4061C1.83079 10.1563 2.23722 10.1563 2.48792 10.4061Z" fill="#9BA1CC"/>
+                        </svg>
+                        <span>Supports</span>
+                    </a>
+                    <ul class="nav-submenu menu-content team_submenu">
+                      <li><a href="{{ url('/admin/support/add') }}">Add</a></li>
+                      <li><a href="{{ url('/admin/support') }}">List</a></li>
+                    </ul>
+                </li>
+                
+                <li class="dropdown">
+                    <a class="nav-link menu-title team_menu_title" href="#">
+                       <svg width="23" height="17" viewBox="0 0 23 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.2056 10.7866C14.7171 10.7866 17.7155 11.3433 17.7155 13.571C17.7155 15.7979 14.7364 16.3749 11.2056 16.3749C7.69398 16.3749 4.69558 15.8181 4.69558 13.5913C4.69558 11.3635 7.67474 10.7866 11.2056 10.7866ZM16.8201 9.4451C18.1626 9.42021 19.6059 9.60456 20.1393 9.73544C21.2692 9.95757 22.0123 10.411 22.3202 11.0701C22.5805 11.6111 22.5805 12.2388 22.3202 12.7789C21.8492 13.8011 20.3308 14.1292 19.7406 14.214C19.6188 14.2324 19.5207 14.1264 19.5335 14.0039C19.835 11.1715 17.4368 9.82853 16.8165 9.51976C16.7899 9.50593 16.7844 9.48473 16.7871 9.47183C16.789 9.46261 16.8 9.44786 16.8201 9.4451ZM5.69599 9.44547C5.71616 9.44823 5.72624 9.46298 5.72807 9.47128C5.73082 9.4851 5.72532 9.50538 5.69966 9.52013C5.07835 9.8289 2.68019 11.1718 2.98167 14.0033C2.9945 14.1268 2.89737 14.2319 2.77549 14.2144C2.18534 14.1296 0.666896 13.8015 0.195876 12.7793C-0.0652921 12.2382 -0.0652921 11.6115 0.195876 11.0704C0.50378 10.4114 1.24605 9.95794 2.37595 9.73488C2.9102 9.60492 4.35258 9.42058 5.69599 9.44547ZM11.2056 0C13.5964 0 15.5135 1.92637 15.5135 4.33202C15.5135 6.73676 13.5964 8.66497 11.2056 8.66497C8.81471 8.66497 6.89764 6.73676 6.89764 4.33202C6.89764 1.92637 8.81471 0 11.2056 0ZM17.0538 0.722434C19.3631 0.722434 21.1766 2.9078 20.559 5.34203C20.142 6.98082 18.6327 8.06936 16.9512 8.02512C16.7826 8.02051 16.6167 8.00484 16.4563 7.97719C16.3399 7.95691 16.2813 7.82511 16.3473 7.72741C16.9887 6.77805 17.3544 5.63605 17.3544 4.41018C17.3544 3.13085 16.9548 1.93817 16.2611 0.960234C16.2391 0.929818 16.2226 0.882811 16.2446 0.847786C16.263 0.819213 16.2969 0.804466 16.3289 0.797092C16.5626 0.749163 16.8027 0.722434 17.0538 0.722434ZM5.46094 0.722342C5.71203 0.722342 5.95212 0.749071 6.18672 0.797C6.21787 0.804374 6.2527 0.820043 6.27102 0.847694C6.2921 0.882719 6.27652 0.929726 6.25453 0.960142C5.56083 1.93807 5.16129 3.13076 5.16129 4.41009C5.16129 5.63596 5.52692 6.77796 6.16839 7.72731C6.23437 7.82502 6.17572 7.95682 6.05934 7.9771C5.89806 8.00567 5.73311 8.02042 5.56449 8.02503C3.88293 8.06927 2.37366 6.98073 1.9567 5.34194C1.33815 2.90771 3.15166 0.722342 5.46094 0.722342Z" fill="#9BA1CC"/>
+                        </svg>
     
-        </ul>
-      </div>
-    </div>
+                        <span>Team Setup</span></a>
+                    <ul class="nav-submenu menu-content team_submenu">
+                      <li><a href="{{ url('/admin/team/create') }}">Add Team</a></li>
+                      <li><a href="{{ url('/admin/team') }}">Team</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title team_menu_title" href="#">
+                        <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.4" d="M18.778 6.96809H17.5952V5.81173C17.5952 5.31805 17.1993 4.91553 16.7115 4.91553C16.2246 4.91553 15.8277 5.31805 15.8277 5.81173V6.96809H14.647C14.1591 6.96809 13.7632 7.37061 13.7632 7.86429C13.7632 8.35797 14.1591 8.7605 14.647 8.7605H15.8277V9.91788C15.8277 10.4116 16.2246 10.8141 16.7115 10.8141C17.1993 10.8141 17.5952 10.4116 17.5952 9.91788V8.7605H18.778C19.2648 8.7605 19.6617 8.35797 19.6617 7.86429C19.6617 7.37061 19.2648 6.96809 18.778 6.96809Z" fill="#9BA1CC"/>
+                            <path d="M7.3732 12.304C3.39582 12.304 0 12.9398 0 15.4804C0 18.02 3.37516 18.6788 7.3732 18.6788C11.3496 18.6788 14.7464 18.0429 14.7464 15.5023C14.7464 12.9618 11.3712 12.304 7.3732 12.304Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M7.37336 9.88422C10.0814 9.88422 12.2521 7.68552 12.2521 4.94261C12.2521 2.19971 10.0814 0 7.37336 0C4.66536 0 2.49463 2.19971 2.49463 4.94261C2.49463 7.68552 4.66536 9.88422 7.37336 9.88422Z" fill="#9BA1CC"/>
+                        </svg>
+    
+                        <span>User Setup</span></a>
+                    <ul class="nav-submenu menu-content team_submenu">
+                      <li><a href="{{ url('/admin/user/setup') }}">Add User</a></li>
+                      <li><a href="{{ url('/admin/userlist') }}">User List</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="nav-link menu-title team_menu_title" href="#">
+                        <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.6228 0.494812C16.195 0.057583 15.5618 -0.104132 14.9714 0.066995L1.20424 4.04484C0.581335 4.21768 0.139828 4.71138 0.0208947 5.3377C-0.100605 5.97601 0.323789 6.78715 0.87824 7.12598L5.18294 9.75449C5.62444 10.0249 6.1943 9.95727 6.55965 9.59106L11.489 4.66175C11.7371 4.40421 12.1478 4.40421 12.3959 4.66175C12.6441 4.90903 12.6441 5.31203 12.3959 5.56872L7.45807 10.498C7.09186 10.8642 7.02341 11.4324 7.29293 11.8747L9.92315 16.1957C10.2312 16.7082 10.7617 17 11.3435 17C11.412 17 11.489 17 11.5574 16.9906C12.2248 16.9059 12.7553 16.4515 12.9521 15.8098L17.0335 2.14619C17.2132 1.56436 17.0506 0.931186 16.6228 0.494812Z" fill="#9BA1CC"/>
+                            <path opacity="0.4" d="M6.37669 14.6675C6.62653 14.9182 6.62653 15.3247 6.37669 15.5754L5.20789 16.7433C5.08297 16.8691 4.91869 16.9315 4.75441 16.9315C4.59012 16.9315 4.42584 16.8691 4.30092 16.7433C4.05022 16.4926 4.05022 16.087 4.30092 15.8363L5.46886 14.6675C5.71956 14.4177 6.12599 14.4177 6.37669 14.6675ZM5.70613 11.4264C5.95597 11.6771 5.95597 12.0835 5.70613 12.3342L4.53733 13.5022C4.41241 13.6279 4.24813 13.6904 4.08384 13.6904C3.91956 13.6904 3.75528 13.6279 3.63036 13.5022C3.37966 13.2515 3.37966 12.8459 3.63036 12.5952L4.7983 11.4264C5.049 11.1765 5.45543 11.1765 5.70613 11.4264ZM2.48792 10.4061C2.73776 10.6568 2.73776 11.0633 2.48792 11.314L1.31912 12.4819C1.1942 12.6077 1.02991 12.6701 0.865633 12.6701C0.701351 12.6701 0.537069 12.6077 0.412147 12.4819C0.161446 12.2312 0.161446 11.8256 0.412147 11.5749L1.58009 10.4061C1.83079 10.1563 2.23722 10.1563 2.48792 10.4061Z" fill="#9BA1CC"/>
+                        </svg>
+    
+                        <span>Partner</span></a>
+                    <ul class="nav-submenu menu-content team_submenu">
+                      <li><a href="{{ url('/admin/partner/create') }}">Add</a></li>
+                      <li><a href="{{ url('/admin/partner') }}">List</a></li>
+                    </ul>
+                </li>
+        
+            </ul>
+            </div>
+            
+        </div>
+        
     </nav>
+    <!--<div class="left_sidebar_shadow"></div>-->
 </header>
+
 <!-- Page Sidebar Ends-->

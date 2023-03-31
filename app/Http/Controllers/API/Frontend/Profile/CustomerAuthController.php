@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Models\CustomerBilling;
 use App\Models\Cart;
+use App\Models\ProductSubscription;
 
 use App\Models\CustomerPasswordResetOtp;
 use Carbon\Carbon;
@@ -26,6 +27,8 @@ use Session;
 use App\Models\Product;
 class CustomerAuthController extends Controller
 {
+    protected $documentDirectory  = "/upload/customer/";
+    
     public function CustRegister(Request $request)
     {
         
@@ -40,11 +43,27 @@ class CustomerAuthController extends Controller
        
         $user = Customer::create([
             'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'last_name'  => $request->last_name,
+            'email'      => $request->email,
+            'phone'      => $request->phone,
+            'password'   => Hash::make($request->password),
         ]);
-
+    
+        if($user){
+            
+            $saveData = new CustomerAddress();
+            $saveData->email     = $request->get('email');
+            $saveData->address   = $request->get('address');
+            $saveData->phone     = $request->get('phone');
+            $saveData->country   = $request->get('country');
+            $saveData->city      = $request->get('city');
+            $saveData->post_code = $request->get('zip_code');
+            $saveData->customer_id = $user->id;
+            $saveData->city_id = 52;
+            $saveData->zone_id = 472;
+            $saveData->area_id = 1062;
+            $saveData->save();
+        }
         $token = $user->createToken('token')->plainTextToken;
         $response = [
             'success' => true,
@@ -91,12 +110,15 @@ class CustomerAuthController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
-        
-        $email_status = Customer::where('email', $request->email)->orWhere('phone', $request->email)->first();
-
+       
+        $email_status = Customer::where('email', $request->email)
+            ->whereIn('status', [1, 3])
+            ->first();
+       
         if (!is_null($email_status)) {
 
             if (Hash::check($request->password, $email_status->password)) {
+                
                 $customer = Customer::where("email", $request->email)->orWhere('phone', $request->email)->first();
                 $token = $customer->createToken('token')->plainTextToken;
                 
@@ -121,6 +143,13 @@ class CustomerAuthController extends Controller
                 return response()->json(["status" => "failed", "success" => false, "message" => "Unable to login. Incorrect password."]);
             }
         } else {
+            
+            $email_status = Customer::where('email', $request->email)
+                ->first();
+            
+            if($email_status->status == 2) {
+                return response()->json(["status" => "failed", "success" => false, "message" => "Your account suspened."]);
+            }
             return response()->json(["status" => "failed", "success" => false, "message" => "Unable to login. Credential doesn't Match."]);
         }
 
@@ -275,8 +304,7 @@ class CustomerAuthController extends Controller
     {
         
        
-         $customer = Customer::findOrFail(auth()->user()->id);
-        
+        $customer = Customer::findOrFail(auth()->user()->id);
         
         if(!empty($request->get('email'))) {
             
@@ -292,7 +320,6 @@ class CustomerAuthController extends Controller
           
         }
 
-       
         
         if ($request->exists('password')) {
             
@@ -340,7 +367,16 @@ class CustomerAuthController extends Controller
             $customer->phone = $request->get('phone');
         }
 
-
+        $cvd ='';
+    
+            if ($request->hasfile('file')) {
+                
+                $cvInfo =$request->file;
+                $cvd   =  date('ymdh') . rand(0,99999) . $cvInfo->getClientOriginalName();
+                $cvInfo->move(public_path() . $this->documentDirectory, $cvd);
+                $customer->photo = $cvd;
+            }
+        
         $customer->save();
         $checkExit = CustomerAddress::where('customer_id', auth()->user()->id)->first();
         
@@ -364,8 +400,11 @@ class CustomerAuthController extends Controller
             if(!empty($request->get('zip_code'))) {
                 $checkExit->post_code = $request->get('zip_code');
             }
-        
+            
+            
+     
             $checkExit->save();
+            
         } else {
             $saveData = new CustomerAddress();
             $saveData->email     = $request->get('email');
@@ -398,18 +437,21 @@ class CustomerAuthController extends Controller
 
 
         if (is_numeric($request->input('email'))) { //number
+        
             $customer = Customer::where('phone', $request->email)->first();
+            
             if ($customer){
                 $forget_password_data = [
-                    'otp' => $otp,
-                    'customer_id' => $customer->id,
-                    'contact' => $request->email,
-                    'number_or_email' => 'number',
-                    'expire_at' => Carbon::now()->addMinutes(5),
+                    'otp'              => $otp,
+                    'customer_id'      => $customer->id,
+                    'contact'          => $request->email,
+                    'number_or_email'   => 'number',
+                    'expire_at'       => Carbon::now()->addMinutes(5),
                 ];
+                
                 CustomerPasswordResetOtp::create($forget_password_data);
                 $text = 'Your password Reset OTP is '.$otp.'. Valid till 5min. -Orpon BD';
-                SMSController::sendSMS($request->email, $text );
+                // SMSController::sendSMS($request->email, $text );
                 return response()->json(['msg'=>'OTP sent to your number please check it']);
             }else{
                 throw ValidationException::withMessages(['email' => 'Sorry! No User found']);
@@ -426,10 +468,91 @@ class CustomerAuthController extends Controller
                     'expire_at' => Carbon::now()->addMinutes(5),
                 ];
                 CustomerPasswordResetOtp::create($forget_password_data);
+                
                 Mail::to($request->email)->send(new ForgetPasswordMail($otp));
                 return response()->json(['msg'=>'OTP sent to your mail please check it']);
             }else{
                 throw ValidationException::withMessages(['email' => 'Sorry! No User found']);
+            }
+
+        }
+        return $request->all();
+    }
+    
+     /**
+     * @throws ValidationException
+     */
+    public function forgetPasswordsendEmail(Request $request)
+    {
+        $this->validate($request, [
+            'email' => 'required',
+        ]);
+
+        $otp = rand(100000, 999999);
+
+
+        if (is_numeric($request->input('email'))) { //number
+        
+            $customer = Customer::where('phone', $request->email)->first();
+            
+            if ($customer){
+                $forget_password_data = [
+                    'otp'              => $otp,
+                    'customer_id'      => $customer->id,
+                    'contact'          => $request->email,
+                    'number_or_email'   => 'number',
+                    'expire_at'       => Carbon::now()->addMinutes(5),
+                ];
+                
+                CustomerPasswordResetOtp::create($forget_password_data);
+                $text = 'Your password Reset OTP is '.$otp.'. Valid till 5min. -Orpon BD';
+                // SMSController::sendSMS($request->email, $text );
+                return response()->json(['msg'=>'OTP sent to your number please check it']);
+                
+            }else{
+                throw ValidationException::withMessages(['email' => 'Sorry! No User found']);
+            }
+        } else {//email
+
+            $customer = Customer::where('email', $request->email)->first();
+            if ($customer){
+                $forget_password_data = [
+                    'otp' => $otp,
+                    'customer_id' => $customer->id,
+                    'contact' => $request->email,
+                    'number_or_email' => 'email',
+                    'expire_at' => Carbon::now()->addMinutes(5),
+                ];
+                CustomerPasswordResetOtp::create($forget_password_data);
+                
+                $data = [
+                    'name'      =>"Shifti",
+                    'fullName'  => "Raton Kumar",
+                    'email'     => 'ratonkumarcse@gmail.com',
+                    'message'   => "good",
+                    'otp'       => $otp,
+                ];
+                
+              
+                
+                Mail::send(['html' => 'emails.password_reset'], compact('data'), function($message) use ($data) {
+                     $message->to($data['email'], 'Shifti')->subject
+                        ('Password Recovery');
+                     $message->from('shifti@mamundevstudios.com','Shifti');
+                });
+                    
+                    return response()->json([
+                        'msg'=>'Sent reset link to your mail please check it',
+                        'status' => 200
+                    ]);
+                
+            }else{
+                return response()->json([
+                    'msg'=>'Sorry! no customer found',
+                    'status' => 400
+                ]);
+
+             
             }
 
         }
@@ -482,6 +605,71 @@ class CustomerAuthController extends Controller
         }
         return $request->all();
     }
+    
+      /**
+     * @throws ValidationException
+     */
+    public function passwordChange(Request $request)
+    {
+         $this->validate($request, [
+            'otp_check'=>'required|digits:6',
+        ]);
+        
+        $passValue = $request->form_Value;
+        
+        $passwordInfo = CustomerPasswordResetOtp::where('otp', $request->otp_check)->first();
+       
+ 
+       
+        $otp_details = CustomerPasswordResetOtp::where('contact', $passwordInfo->contact)->latest()->first();
+        
+        if ($otp_details){
+            if (Carbon::create($otp_details->expire_at)->greaterThan(Carbon::now()) ){
+                if ($request->otp_check == $otp_details->otp){
+                    
+                    $customer = Customer::findOrFail($otp_details->customer_id);
+                    if ($customer){
+                        $password_data['password'] = Hash::make($passValue['password']);
+                        $customer->update($password_data);
+                        $otp_details->delete();
+
+                        $token = $customer->createToken('token')->plainTextToken;
+                   
+                        return response()->json(
+                            [
+                                "status" => 200,
+                                "success" => true,
+                                "message" => "You have logged in successfully",
+                                "user" => $customer,
+                                'token' => $token,
+                                'msg' => 'Password Reset Successful'
+                            ]);
+
+                    }
+                }else{
+                    return response()->json([
+                        'msg'=>'Sorry! OTP not match',
+                        'status' => 400
+                    ]);
+                    // throw ValidationException::withMessages(['otp' => 'Sorry! OTP not match']);
+                }
+            }else{
+                    return response()->json([
+                        'msg'=>'Sorry! OTP expired',
+                        'status' => 400
+                    ]);
+                    
+                throw ValidationException::withMessages(['otp' => 'Sorry! OTP expired']);
+            }
+        }else{
+            return response()->json([
+                'msg'=>'Sorry! no user found',
+                'status' => 400
+            ]);
+           
+        }
+        return $request->all();
+    }
 
  /**
      * Store a newly created resource in storage.
@@ -515,13 +703,14 @@ class CustomerAuthController extends Controller
             return response()->json(['msg' => 'Cart Updated Successfully']);
         }else{
             $product = Product::select('stock', 'id')->findOrFail($request->input('product_id'));
+            
            
                 $cart['customer_id']      = auth()->user()->id;
                 $cart['product_id']       = $request->input('product_id');
                 $cart['subscriber_id']    = 0;
                 $cart['quantity']         = 1;
                 $cart['product_type_id']  = 1;
-                $cart['type']             = 1;
+                $cart['type']             = $request->type;
                 $saved_cart = Cart::create($cart);
                 return response()->json(['msg' => 'Product Added to Cart Successfully']);
             
@@ -538,39 +727,88 @@ class CustomerAuthController extends Controller
     public function subcraptionReqeust(Request $request)
     {
         $this->validate($request, [
-            'product_id' => 'required',
+            'product_id'    => 'required',
+            'subscriber_id' => 'required',
         ]);
-        
-     
-        
+        $array = explode('_',$request->subscriber_id);
+                
+            $subscriber_id= $array[0];
+            $type     = $array[1];
+                
         $cart_exits = Cart::where('customer_id', auth()->user()->id)
             ->where('product_id', $request->input('product_id'))
-             ->where('subscriber_id', $request->input('subscriber_id'))
+            ->where('subscriber_id',$subscriber_id)
+            ->where('type', $request->type)
             ->first();
-       
-        if ($cart_exits) {
-//                if ($request->input('product_type_id') == 2) {
-                $total_quantity =  $cart_exits->quantity;
-                $product = Product::select('stock', 'id')->findOrFail($request->input('product_id'));
-                if ($product['stock'] >= $total_quantity ) {
-                    $cart['quantity'] =$total_quantity;
-                }else{
-                    throw ValidationException::withMessages(['msg'=>'Sorry Product Stock out!']);
-                }
-
-            $cart_exits->update($cart);
-            return response()->json(['msg' => 'Cart Updated Successfully']);
             
-        }else{
+        $serviceFee = 25.50;
+        $numberOfUser = 0;
+        
+        if ($cart_exits) {
+                
+            $cartExist =Cart::find($cart_exits->id)->delete();
+            
             $product = Product::select('stock', 'id')->findOrFail($request->input('product_id'));
+            
+            $productSubcription = ProductSubscription::where('id', $subscriber_id)->first();
+            
+            
+            if(!empty($productSubcription)) {
+                $price = $productSubcription->price;
+                
+                $numberOfUser = $request->number_of_user;
+                if($type == 1) {
+                    
+                 
+                    $price = round( (((($productSubcription->price * 12)/100)*90))* $request->number_of_user,2);
+                    $serviceFee =  round((((25.50 * 12)/100)*90),2);
+                }  else {
+                    $price = round(( $productSubcription->price * $request->number_of_user ), 2);
+                }
+                
+            }
+             
+            $cart['customer_id']      = auth()->user()->id;
+            $cart['product_id']       = 1101;
+            $cart['subscriber_id']    = $subscriber_id;
+            $cart['quantity']         = 1;
+            $cart['product_type_id']  = 1;
+            $cart['type']             = $request->type;
+            $cart['price']            = $price;
+            $cart['service_charge']   = $serviceFee;
+            $cart['user_number']      = $numberOfUser;
+            $saved_cart = Cart::create($cart);
            
+            return response()->json(['msg' => 'Product Added to Cart Successfully']);
+        }else{
+           
+                $product = Product::select('stock', 'id')->findOrFail($request->input('product_id'));
+                
+                $productSubcription = ProductSubscription::where('id', $subscriber_id)->first();
+                
+                if(!empty($productSubcription)) {
+                    $price = $productSubcription->price;
+                    $numberOfUser = $request->number_of_user;
+                    if($type == 1) {
+                        
+                        $price = round( (((($productSubcription->price * 12)/100)*90))* $request->number_of_user,2);
+                        $serviceFee =  round((((25.50 * 12)/100)*90),2);
+                    } else {
+                        $price = round(( $productSubcription->price * $request->number_of_user ), 2);
+                    }
+                }
+                 
                 $cart['customer_id']      = auth()->user()->id;
-                $cart['product_id']       = $request->input('product_id');
-                $cart['subscriber_id']    = $request->subscriber_id;
+                $cart['product_id']       = 1101;
+                $cart['subscriber_id']    = $subscriber_id;
                 $cart['quantity']         = 1;
                 $cart['product_type_id']  = 1;
-                $cart['type']             = 2;
+                $cart['type']             = $request->type;
+                $cart['price']            = $price;
+                $cart['service_charge']   = $serviceFee;
+                $cart['user_number']      = $numberOfUser;
                 $saved_cart = Cart::create($cart);
+               
                 return response()->json(['msg' => 'Product Added to Cart Successfully']);
             
         }

@@ -15,30 +15,29 @@
 	        @endif
 			<!-- Ajax data source array start-->
             <div class="col-md-12">
-                <div class="card">
                   <div class="card-header">
                     <h5>User Update</h5>
                   </div>
                   <div class="card-body">
-                     <form action="{{ route('user.update',$userInfoUpdate->id) }}" method="post" enctype="multipart/form-data">
+                     <form action="{{ route('user.update', $userInfoUpdate->id) }}" method="post" enctype="multipart/form-data">
                            @csrf
                            <div class="row">
 				              <div class="col-md-6 mb-3">
-				                <label for="validationDefault01">Name<span style="color:red">*</span></label>
-                                <input type="text" name="name" class="form-control" value="{{$userInfoUpdate->name}}">
+				                <label for="name">Name<span style="color:red">*</span></label>
+                                <input type="text" name="name" class="form-control" value="{{ $userInfoUpdate->name }}">
                               </div>
                             </div>
                             <div class="row">
 				              <div class="col-md-6 mb-3">
-				                <label for="validationDefault01">Email <span style="color:red">*</span></label>
+				                <label for="email">Email <span style="color:red">*</span></label>
                                 <input type="email" name="email" class="form-control" value="{{ $userInfoUpdate->email }}">
                                
                               </div>
                              </div>
                             <div class="row">
 				              <div class="col-md-6 mb-3">
-				                <label for="validationDefault01">Password<span style="color:red">*</span></label>
-                                <input type="password" name="password" class="form-control" value="{{ $userInfoUpdate->password }}">
+				                <label for="password">Password<span style="color:red">*</span></label>
+                                <input type="password" name="password" class="form-control" >
                               </div>
                             </div>
                           <button type="submit" class="btn btn-primary">Update</button>
@@ -47,7 +46,6 @@
             </div>
 		</div>
 	</div>
-  </div>
 </div>
 
 @endsection

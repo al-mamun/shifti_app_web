@@ -4,11 +4,57 @@ namespace App\Http\Controllers\API\Backend\FAQ;
 
 use App\Http\Controllers\Controller;
 use App\Models\FAQ\Faq;
+use App\Models\Terms\TermsPage;
 use App\Models\Terms\Terms;
 use Illuminate\Http\Request;
+use App\Models\Visitors;
 
 class FaqController extends Controller
 {
+    
+    private function get_client_ip() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
+    
+    private function visitorCountPage() {
+        
+        $visitorSave = new Visitors();
+        $visitorSave->page_slug     = 'faq'; 
+        $visitorSave->total_visitor = 1;
+        $visitorSave->date          = date('Y-m-d');
+        $visitorSave->user_agent    = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->ip            = $this->get_client_ip();
+        $visitorSave->browser       = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->save();
+    }
+    
+    private function visitorCountPageTerms() {
+        
+        $visitorSave = new Visitors();
+        $visitorSave->page_slug     = 'terms'; 
+        $visitorSave->total_visitor = 1;
+        $visitorSave->date          = date('Y-m-d');
+        $visitorSave->user_agent    = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->ip            = $this->get_client_ip();
+        $visitorSave->browser       = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->save();
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -74,6 +120,8 @@ class FaqController extends Controller
 
      public function faqApi($faq)
     {
+        
+        $this->visitorCountPage();
        
         $productInfoArray = [];
 
@@ -93,31 +141,55 @@ class FaqController extends Controller
 
          return json_encode($productInfoArray);
     }
-    public function termsApi(){
+    
+    
+    public function termsApi(Request $request){
         
-        $termArray = [];
-
-        $termInfo = Terms::all();
-
-        foreach( $termInfo as $con) {
-
-            $craetedAt = date("d M ", strtotime($con->created_at)); 
-     
-            $termArray[] =[
-                'ID'          => $con->id,
-                'title'       => $con->title,
-                'subtitle'    => $con->content,
-                'type'        => $con->type,
+        $this->visitorCountPageTerms();
+        
+        $type = $request->type;
+        
+        if($type== 1) {
+            $termArray = [];
+        
+            $termInfo = Terms::all();
+    
+            foreach( $termInfo as $con) {
+    
+                $craetedAt = date("d M ", strtotime($con->created_at)); 
+         
+                $termArray[] =[
+                    'ID'          => $con->id,
+                    'title'       => $con->title,
+                    'description'    => $con->content,
+                    'type'        => $con->type,
+                ];
+            }
+        } else {
+            
+            $termArray = [];
+        
+            $termInfo = TermsPage::first();
+    
+            $termArray =[
+                'ID'             => $termInfo->id,
+                'page_title'    => $termInfo->page_title,
+                'page_content'  => $termInfo->page_content,
             ];
+            
         }
-
+      
          return json_encode($termArray);
     }
+    
     public function termView()
-        {
-             $terms = Terms::get();
-             return view('admin.settings.terms.index',compact('terms'));
-        }
+    {
+        $terms = Terms::get();
+        $termsPage = TermsPage::first();
+         
+        return view('admin.settings.terms.index',compact('terms','termsPage'));
+    }
+        
     public function termSave(Request $request)
         {
             // $this->validate($request, [
@@ -125,6 +197,12 @@ class FaqController extends Controller
             //     'content'     =>'required',
             //     'type'        =>'required'
             // ]);
+            
+            $termsPage = TermsPage::first();
+            
+            $termsPage->page_title   = $request->page_title;
+            $termsPage->page_content = $request->page_content;
+            $termsPage->save();
             
             $title     = $request->title;
             $content   = $request->content;

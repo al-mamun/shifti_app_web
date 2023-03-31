@@ -85,7 +85,7 @@ use App\Http\Controllers\APIAuthenticationController;
 use App\Http\Controllers\API\Backend\Settings\StoriesController;
 use App\Http\Controllers\API\Backend\Settings\AboutPageController;
 use App\Http\Controllers\API\Backend\Settings\HomePageController;
-
+use App\Http\Controllers\API\Backend\Settings\SettingsController;
 use App\Http\Controllers\API\Backend\Story\StoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -247,6 +247,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth:sanctum'], function
 //frontend routes
 Route::group(['prefix' => 'frontend'], function () {
     
+    Route::post('customer/forget_password',[CustomerAuthController::class, 'forgetPasswordsendEmail']);
+    Route::post('customer/password_change',[CustomerAuthController::class, 'passwordChange']);
     #product page
     Route::get('/latest/product/list',  [ProductController::class, 'productList'])->name('productList');
     Route::get('/featured/products/list',  [ProductController::class, 'featuredproductList'])->name('featuredproductList');
@@ -265,6 +267,7 @@ Route::group(['prefix' => 'frontend'], function () {
     Route::get('/job-location', [JoblistController::class, 'jobLocation']);
     Route::get('/job-team', [JoblistController::class, 'jobTeam']);
     Route::post('/apply-job', [JoblistController::class, 'applyJob']);
+    Route::post('/subscribe/apply', [ContactMailController::class, 'subscribeApplyJob']);
     Route::post('/job/opening/category/filter', [JoblistController::class, 'jobOpenCategoryList']);
     Route::post('/job/opening/location/filter', [JoblistController::class, 'jobOpenLocationList']);
     Route::post('/job/opening/team/filter', [JoblistController::class, 'jobOpenTeamList']);
@@ -290,6 +293,7 @@ Route::group(['prefix' => 'frontend'], function () {
     #home pag
     Route::get('/home/page/content',  [HomePageController::class, 'homePagecontent'])->name('homePagecontent');
     Route::get('/home/page/review/content',  [HomePageController::class, 'homePageReviewcontent'])->name('homePageReviewcontent');
+    Route::get('/home/page/partner/content',  [HomePageController::class, 'homePagePartner'])->name('homePagePartner');
     
     #about page
     Route::get('/about/page/content',  [AboutPageController::class, 'aboutPageContent'])->name('aboutPageContent');
@@ -384,14 +388,19 @@ Route::group(['prefix' => 'frontend'], function () {
     Route::get('get-store-feature-products/{id}', [StoreController::class, 'get_store_feature_product']);
     Route::get('get-store-new-arrival-products/{id}', [StoreController::class, 'get_store_new_arrival_product']);
     Route::get('get-store-new-products/{id}', [StoreController::class, 'get_store_new_product']);
-
+    
+    Route::get('global/setting', [SettingsController::class, 'settingApi']);
+    
+    
     Route::post('get-grocery-category-for-products-page', [GroceryController::class, 'get_grocery_category_for_products_page']);
 
     //customers auth section
 });
 
 Route::group(['prefix' => 'frontend', 'middleware' => 'auth:customers'], function () {
-
+    
+   
+    
     Route::get('store-follow-unfollow/{id}', [StoreController::class, 'store_follow_unfollow']);
     Route::get('store-like-unlike/{id}', [StoreLikeController::class, 'store_like_unlike']);
 
@@ -437,6 +446,7 @@ Route::group(['prefix' => 'frontend', 'middleware' => 'auth:customers'], functio
 
     // Route::get('get-my-order', [OrderController::class, 'index']);
     Route::get('get-my-order-details/{id}', [OrderController::class, 'show']);
+     Route::get('get-my-order-amount', [OrderController::class, 'totalOrderAmount']);
     Route::get('global-order-list', [OrderController::class, 'global_order_list']);
 
     Route::get('get-cart-count', [CartController::class, 'global_order_list']);
@@ -487,9 +497,14 @@ Route::group(['prefix' => 'frontend'], function () {
     Route::get('get-areas/{id}', [FrontCustomerAddressController::class, 'get_areas']);
     
 });
+
+
 Route::group([ 'middleware' => 'auth:customers'], function () {
     
     Route::get('get-my-order', [OrderController::class, 'index']);
+    Route::get('get-my-active-package', [OrderController::class, 'getMyActivePackage']);
+    
+    Route::get('get-total-amount', [OrderController::class, 'totalOrderAmount']);
     Route::get('get-cart-summary', [CartController::class, 'get_cart_summary']);
     Route::get('subcraption-get-cart-summary', [CartController::class, 'subcraption_get_cart_summary']);
     

@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Auth;
 use AuthenticatesUsers;
 use Session;
+use App\Models\Visitors;
 
 class DashboardController extends Controller
 {
@@ -30,14 +31,14 @@ class DashboardController extends Controller
         
      
         if( Auth::attempt( $userData, $remember_me ) ) {
-            
-
+           
             Session::put('session_key', 'value');
             $user   = Auth::User();
           
             return Redirect('admin/dashboard');
 
         } else {
+            
             Auth::logout();
             return redirect('/login')->with([
                 'status' => 1,
@@ -45,30 +46,44 @@ class DashboardController extends Controller
             ]);
         }
     }
+    
+    /**
+     * Admin dashboard
+     * */
     public function dashboard() {
         
         $todayTotalVisiting = 100;
         $total_sale = OrderProduct::all()->sum('price');
         $todaySale  = OrderProduct::wherebetween ('created_at',[date('Y-m-d'),' 00:00:00',date('Y-m-d'),' 23:59:59' ])->sum('price');
         
-        $orders = Order::with(['customer', 'address','order_product', 'shipping_status', 'payment_status'])->latest()
-            ->limit(5)
-            ->get();
+        $customerInfo = Customer::orderBy('customers.id','desc')
+            ->leftjoin('customer_package','customers.id','customer_package.customer_id')
+            ->leftjoin('subscription_product','customer_package.package_id','subscription_product.id')
+            ->select('customers.*','subscription_product.price')
+            ->paginate(5);
         
         $productInfo = Product::latest()
             ->limit(5)
             ->get();
          
-         $totalProduct = Product::count();
-            
+        $totalCustomer  = Customer::count();
+        $totalVisitor   = Visitors::where('date', date('Y-m-d'))->count();
+        $startDate      = date('Y-m-01 00:00:00');
+        $endDate        = date('Y-m-t 23:59:59');
+        
+        $newCustomer    = Customer::whereBetween('created_at',[$startDate, $endDate])->count();
+        
         return view('admin.dashboard.index',[
             'todaySale'           => $todaySale,
-            'totalProduct'        => $totalProduct,
+           
             'todayTotalVisiting'  => $todayTotalVisiting,
             'total_sale'          => $total_sale,
-            'orders'              => $orders,
+            'customerInfo'        => $customerInfo,
             'productInfo'         => $productInfo,
-            'todaySale'           => $todaySale,
+            'totalVisitor'        => $totalVisitor,
+            'totalCustomer'        => $totalCustomer,
+            'newCustomer'          => $newCustomer,
+            'type'                => 1
         ]);
     }
     /**

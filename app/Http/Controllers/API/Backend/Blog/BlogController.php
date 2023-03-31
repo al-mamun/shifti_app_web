@@ -16,14 +16,18 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 use Session;
 use URL;
+use App\Models\Visitors;
 
 class BlogController extends Controller
 {
     public function create() {
+        
         $categoryTagList = CategoryTag::get();
-        $taglist = BlogTag::get();
+        $taglist         = BlogTag::get();
+        
         return view('admin.blog.create',[
               'categoryTagList'=>$categoryTagList,
               'taglist'=>$taglist
@@ -39,18 +43,67 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::with('user')->latest()->paginate();
+        
+        $categoryTagList = CategoryTag::get();
+        $taglist         = BlogTag::get();
+        $blogs = Blog::all();
         $type  = 2;
         
-        return view('admin.blog.index',compact('blogs','type'));
+        return view('admin.blog.index',[
+              'categoryTagList'=>$categoryTagList,
+              'taglist'=>$taglist,
+              'blogs'=>$blogs,
+              'type'=>$type
+            ]);
 
     }
-
-    public function blogApi()
+    
+      private function get_client_ip() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
+    
+    private function visitorCountPage() {
+        
+        $visitorSave = new Visitors();
+        $visitorSave->page_slug     = 'blog'; 
+        $visitorSave->total_visitor = 1;
+        $visitorSave->date          = date('Y-m-d');
+        $visitorSave->user_agent    = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->ip            = $this->get_client_ip();
+        $visitorSave->browser       = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->save();
+    }
+    
+    
+    public function blogApi(Request $request)
     {
         $productInfoArray = [];
-
-        $blogs = Blog::with('user')->latest()->paginate();
+        $limit = $request->get('limit');
+        
+        if(isset($limit)) {
+             $blogs = Blog::with('user')->latest()
+             ->limit($limit)
+             ->get();
+        } else {
+             $blogs = Blog::with('user')->latest()->paginate();
+        }
+        
+        $this->visitorCountPage();
 
         foreach( $blogs as $blogsInfo) {
 
@@ -62,6 +115,7 @@ class BlogController extends Controller
                 'slug'        => $blogsInfo->slug,
                 'image'       =>  URL::asset('images/uploads/blog/'.$blogsInfo->photo),
                 'description' => strip_tags($blogsInfo->description),
+                'short_dsc'   => substr(strip_tags($blogsInfo->description), 0, 200),
                 'tags'        => explode(',', $blogsInfo->tags),
                 'date'        => $craetedAt,
                 'author' => [
@@ -114,23 +168,29 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+         $validator = Validator::make($request->all(), [
             'title'       =>'required',
             'tags'         =>'required',
             'category_name'    =>'required',
             'description'    =>'required',
-            'slug'        =>'required',
             'photo'       => 'required|mimes:jpeg,jpg,png|max:5000',
         ]);
-
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+     
         $data = $request->all();
         $data['user_id'] =1;
         $data['slug']     = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->title)));
-         $data['tags']   = implode(',',$request->tags) ;
+        $data['tags']   = implode(',',$request->tags) ;
         $blog_exist_or_not = Blog::all()->count();
 
         if($blog_exist_or_not > 0){
             $blog = Blog::orderBy('id', 'desc')->first();
+            
             $data['slug_id']=$blog->slug_id+1;
         }else{
             $data['slug_id']= 100001;
@@ -149,7 +209,10 @@ class BlogController extends Controller
         }
 
         Blog::create($data);
-        return redirect('/admin/blog')->with('success',"Created Successfully");
+        return response()->json([
+            'msg'    => 'Add new record succssfully.',
+            'status' => 200,
+        ]);
     }
 
     /**
@@ -162,7 +225,7 @@ class BlogController extends Controller
     {
          return view('admin.blog.show',compact('blog'));
     } 
-    public function edit($id)
+  /*  public function edit($id)
     {
          $blog = Blog::find($id);
          $categoryTagList = CategoryTag::get();
@@ -173,6 +236,18 @@ class BlogController extends Controller
               'taglist'=>$taglist,
               'blog'=>$blog
              ]);
+    }*/
+    public function editBlog(Request $request, $id)
+    {
+         $blog = Blog::find($id);
+         $categoryTagList = CategoryTag::get();
+         $taglist = BlogTag::get();
+         
+        return view('admin.blog.edit-blog',[
+              'categoryTagList'=>$categoryTagList,
+              'taglist'=>$taglist,
+              'blog'=>$blog
+        ]);
     }
 
     /**
@@ -183,44 +258,54 @@ class BlogController extends Controller
      * @return JsonResponse
      * @throws ValidationException
      */
-    public function update(Request $request,int $id)
+    public function updateBlog(Request $request,int $id)
     {
-        $this->validate($request, [
-            'title'       =>'required',
-            'tags'         =>'required',
-            'category_name'    =>'required',
-            'description'    =>'required',
-            'slug'        =>'required',
-            'photo'       => 'required|mimes:jpeg,jpg,png|max:5000',
+        
+        
+        $validator = Validator::make($request->all(), [
+            'title'      => 'required',
+            'tags'  => 'required',
+            'category_name'  => 'required',
+            'description'  => 'required',
         ]);
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+    
         $data = $request->all();
         $data['user_id'] =1;
-        $data['slug']   = Str::of($request->slug)->slug() ;
-         $data['tags']   = implode(',',$request->tags) ;
-         $blog_exist_or_not = Blog::all()->count();
-
+        $data['slug']   = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->title)));
+        $data['tags']   = implode(',',$request->tags) ;
+        
+        $blog_exist_or_not = Blog::all()->count();
+        
         if($blog_exist_or_not > 0){
             $blog = Blog::orderBy('id', 'desc')->first();
-            $data['slug_id']=$blog->slug_id+1;
         }else{
-            $data['slug_id']= 100001;
         }
-
+        $blogInfo = Blog::where('id', $id)->orderBy('id', 'desc')->first();
+        
         $height = 550;
         $width = 1100;
         $path = 'images/uploads/blog/';
-        $name = $data['slug'].'-'.$data['slug_id'];
+        $name = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->title)));
 
-        if ($request->photo) {
+        if ($request->hasFile('photo')) {
             $file = $request->photo;
             $data['photo'] = Helper::uploadImage($name, $height, $width, $path, $file);
-        }else {
-            $data['photo'] = null;
         }
 
 
-        $blog->update($data);
-        return redirect('/admin/blog')->with('success',"Updated Successfully");
+        $blogInfo->update($data);
+        return response()->json([
+            'msg'    => 'Blog information update succssfully.',
+            'status' => 200,
+        ]);
+       
        
     }
 
@@ -231,24 +316,20 @@ class BlogController extends Controller
      * @return JsonResponse
      */
     public function destroy(int $id)
-    {
+    {/*
         $blog = Blog::findOrFail($id);
         Helper::unlinkImage('images/uploads/blog/', $blog->photo);
         $blog->delete();
         Session::flash('success', 'Data Deleted Successfully.');
-        return redirect('/admin/blog')->with('success',"Data Deleted Successfully.");
+        return redirect('/admin/blog')->with('success',"Data Deleted Successfully.");*/
     }
 
   public function delete(int $id)
   {
-    /* try {
-        $blogDelete = Blog::findOrFail($id);
-        $blogDelete->delete();
-        return redirect()->back()->with(['success' => 'Data Deleted Successfully.']);
-        } catch (Throwable $e) {
-            report($e);
-
-            return false;
-        }*/
+        $blog = Blog::find($id);
+        Helper::unlinkImage('images/uploads/blog/', $blog->photo);
+        $blog->delete();
+        Session::flash('success', 'Data Deleted Successfully.');
+        return redirect('/admin/blog')->with('success',"Data Deleted Successfully.");
     }
 }

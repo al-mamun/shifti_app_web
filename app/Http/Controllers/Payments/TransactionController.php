@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Payments;
 use App\Http\Controllers\Controller;
 use App\Models\PaymentHistory;
 use Illuminate\Http\Request;
+use App\Models\Customer;
 
 class TransactionController extends Controller
 {
@@ -15,8 +16,21 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transactions=PaymentHistory::latest()->paginate(10);
-        return view('admin.transaction.index',compact('transactions'))
+         if (isset($request->paginate) && $request->paginate != 'null') {
+            $pagination = $request->paginate;
+        } else {
+            $pagination = 10;
+        }
+        if (isset($request->search) && $request->search != 'null') {
+            $customers = Customer::orderBy('id', 'desc')->where('name', 'like', '%' . $request->search . '%')->orWhere('phone', 'like', '%' . $request->search . '%')->orWhere('email', 'like', '%' . $request->search . '%')->paginate($pagination);
+        } else {
+            $customers = Customer::orderBy('id', 'desc')->paginate($pagination);
+        }
+        $list  = Customer::latest()->get();
+        
+        $transactions= PaymentHistory::latest()->paginate(10);
+        
+        return view('admin.transaction.index',compact('transactions','customers','list'))
                     ->with('i',(request()->input('page',1)-1)*10);
     }
 

@@ -36,19 +36,56 @@
     <link id="color" rel="stylesheet" href="{{ asset('assets/css/color-1.css') }}" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
-     <style>
-        header {
-          background: #2c323f !important;
+    <link rel="stylesheet" type="text/css" href="{{ asset('style.css') }}">
+    <style>
+        .highcharts-figure,
+        .highcharts-data-table table {
+            min-width: 310px;
+            max-width: 800px;
+            margin: 1em auto;
         }
-        .page-wrapper.compact-wrapper .page-body-wrapper.sidebar-icon header.main-nav .main-navbar .nav-menu > li a {
-          color: #fff !important;
+        
+        #container {
+            height: 320px;
+            margin-top: -23px;
         }
-        .page-wrapper.compact-wrapper .page-body-wrapper.sidebar-icon header.main-nav .main-navbar .nav-menu > li .nav-link svg {
-          color: #fff  !important;
+        g.highcharts-exporting-group {
+            display: none !important;
         }
-        .page-wrapper.compact-wrapper .page-body-wrapper.sidebar-icon .according-menu i {
-            vertical-align: middle;
-            color: #fff !important;
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+        
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+        
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+        
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #007AE5;
+        }
+        
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
         }
     </style>
   </head>
@@ -67,297 +104,165 @@
     <!-- Loader ends-->
     <!-- page-wrapper Start-->
     <div class="page-wrapper compact-wrapper" id="pageWrapper">
-        <!-- Page Header Start-->
-      <div class="page-main-header">
-        <div class="main-header-right row m-0">
-          <div class="main-header-left">
-            <div class="logo-wrapper"><a href="{{ url('/admin/dashboard') }}"><img class="img-fluid" src="https://mamundevstudios.com/shifti_api/public/shifti_logo.png" alt=""></a></div>
-          </div>
-        
-          <div class="nav-right col pull-right right-menu">
-            <ul class="nav-menus">
-             
-              <li class="onhover-dropdown p-0">
-                <div class="media profile-media"><img class="b-r-10" src="../assets/images/dashboard/Profile.jpg" alt="">
-                  <div class="media-body"><span>Admin</span>
-                    <p class="mb-0 font-roboto"><i class="middle fa fa-angle-down"></i></p>
-                  </div>
-                </div>
-                <ul class="profile-dropdown onhover-show-div">
-                  <li><i data-feather="user"></i><span>Account </span></li>
-                  <li><i data-feather="mail"></i><span>Inbox</span></li>
-                  <li><i data-feather="file-text"></i><span>Taskboard</span></li>
-                  <li><i data-feather="settings"></i><span>Settings</span></li>
-                  <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                       @csrf
-                      <a href="route('logout')"
-                              onclick="event.preventDefault();
-                                          this.closest('form').submit();" class="dropdown-item dropdown-footer">
-                          {{ __('Log Out') }}
-                      </a>
-                   </form>
-                 </li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <div class="d-lg-none mobile-toggle pull-right"><i data-feather="more-horizontal"></i></div>
-        </div>
-      </div>
-      <!-- Page Header Ends                              -->
-      <!-- Page Body Start-->
+      @include('layouts.header')   
    
       <div class="page-body-wrapper sidebar-icon">
         <!-- Page Sidebar Start-->
          @include('layouts.sidebar')
         <!-- Page Sidebar Ends-->
         <div class="page-body">
-          <div class="container-fluid">
-            <div class="page-header">
-              <div class="row">
-                <div class="col-lg-6">
-                  <h3>
-                     Ecommerce</h3>
-                  <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="index.html"><i data-feather="home"></i></a></li>
-                    <li class="breadcrumb-item">Dashboard</li>
-                    <li class="breadcrumb-item active">Ecommerce</li>
-                  </ol>
-                </div>
-                <div class="col-lg-6">
-                  <!-- Bookmark Start-->
-                  <div class="bookmark pull-right">
-                    <ul>
-                      <li><a href="#" data-container="body" data-toggle="popover" data-placement="top" title="" data-original-title="Chat"><i data-feather="message-square"></i></a></li>
-                      <li><a href="#" data-container="body" data-toggle="popover" data-placement="top" title="" data-original-title="Icons"><i data-feather="command"></i></a></li>
-                      <li><a href="#" data-container="body" data-toggle="popover" data-placement="top" title="" data-original-title="Learning"><i data-feather="layers"></i></a></li>
-                      <li><a href="#"><i class="bookmark-search" data-feather="star"></i></a>
-                        <form class="form-inline search-form">
-                          <div class="form-group form-control-search">
-                            <input type="text" placeholder="Search..">
-                          </div>
-                        </form>
-                      </li>
-                    </ul>
-                  </div>
-                  <!-- Bookmark Ends-->
-                </div>
-              </div>
+            <div class="container-fluid">
+                 @include('admin.dashboard.dashboard_head_box')
+                
             </div>
-          </div>
           <!-- Container-fluid starts-->
           <div class="container-fluid">
-            <div class="row size-column">
-              <div class="col-xl-7 box-col-12 xl-100">
-                <div class="row dash-chart">
-                  <div class="col-xl-6 box-col-6 col-md-6">
-                    <div class="card o-hidden">
-                      <div class="card-header card-no-border">
-                        <div class="card-header-right">
-                          <ul class="list-unstyled card-option">
-                            <li><i class="fa fa-spin fa-cog"></i></li>
-                            <li><i class="view-html fa fa-code"></i></li>
-                            <li><i class="icofont icofont-maximize full-card"></i></li>
-                            <li><i class="icofont icofont-minus minimize-card"></i></li>
-                            <li><i class="icofont icofont-refresh reload-card"></i></li>
-                            <li><i class="icofont icofont-error close-card"></i></li>
-                          </ul>
+            <div class="row">
+                <div class="col-xl-7 box-col-7 col-md-7">
+                    <div class="card o-hidden"  style="background: #fff !important; height:430px">
+                        <div class="card-header card-no-border">
+                            <h5 class="card_title_custom">Visit</h5>
                         </div>
-                        <div class="media">
-                          <div class="media-body">
-                            <p><span class="f-w-500 font-roboto"> Total sale</span><span class="f-w-700 font-primary ml-2">89.21%</span></p>
-                            <h4 class="f-w-500 mb-0 f-26">$<span class="counter">{{ $total_sale }}</span></h4>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="card-body p-0">
-                        <div class="media">
-                          <div class="media-body">
-                            <div class="profit-card">
-                              <div id="spaline-chart"></div>
+                     
+                        <div class="card-body pt-0">
+                            <div class="monthly-visit">
+                                 <div id="container"></div>
+                              <!--<div id="column-chart"></div>-->
                             </div>
-                          </div>
-                        </div>
-                        <div class="code-box-copy">
-                          <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
-                         
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xl-6 box-col-6 col-md-6">
-                    <div class="card o-hidden">
-                      <div class="card-header card-no-border">
-                        <div class="card-header-right">
-                          <ul class="list-unstyled card-option">
-                            <li><i class="fa fa-spin fa-cog"></i></li>
-                            <li><i class="view-html fa fa-code"></i></li>
-                            <li><i class="icofont icofont-maximize full-card"></i></li>
-                            <li><i class="icofont icofont-minus minimize-card"></i></li>
-                            <li><i class="icofont icofont-refresh reload-card"></i></li>
-                            <li><i class="icofont icofont-error close-card"></i></li>
-                          </ul>
-                        </div>
-                        <div class="media">
-                          <div class="media-body">
-                            <p><span class="f-w-500 font-roboto">Today Total visits</span><span class="f-w-700 font-primary ml-2">35.00%</span></p>
-                            <h4 class="f-w-500 mb-0 f-26 counter">{{ $todayTotalVisiting }}</h4>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="card-body pt-0">
-                        <div class="monthly-visit">
-                          <div id="column-chart"></div>
-                        </div>
-                        <div class="code-box-copy">
-                          <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head1" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
-                         
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xl-6 box-col-6 col-lg-12 col-md-6">
-                    <div class="card o-hidden">
-                      <div class="card-body">
-                        <div class="ecommerce-widgets media">
-                          <div class="media-body">
-                            <p class="f-w-500 font-roboto">Today Sale Value<span class="badge pill-badge-primary ml-3">New</span></p>
-                            <h4 class="f-w-500 mb-0 f-26">$<span class="counter">{{ $todaySale }}</span></h4>
-                          </div>
-                          <div class="ecommerce-box light-bg-primary"><i class="fa fa-heart" aria-hidden="true"></i></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xl-6 box-col-6 col-lg-12 col-md-6">
-                    <div class="card o-hidden">
-                      <div class="card-body">
-                        <div class="media">
-                          <div class="media-body">
-                            <p class="f-w-500 font-roboto">Total Product<span class="badge pill-badge-primary ml-3">Hot</span></p>
-                            <div class="progress-box">
-                              <h4 class="f-w-500 mb-0 f-26"><span class="counter">{{ $totalProduct }}</span></h4>
-                              <div class="progress sm-progress-bar progress-animate app-right d-flex justify-content-end">
-                                <div class="progress-gradient-primary" role="progressbar" style="width: 35%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"><span class="font-primary">88%</span><span class="animate-circle"></span></div>
-                              </div>
+                            <div class="code-box-copy">
+                              <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head1" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
+                             
                             </div>
-                          </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-xl-12 box-col-12 xl-100">
-                    <div class="card">
-                  <div class="card-header card-no-border">
-                    <h5>Recent Order</h5>
-                    <div class="card-header-right">
-                      <ul class="list-unstyled card-option">
-                        <li><i class="fa fa-spin fa-cog"></i></li>
-                        <li><i class="view-html fa fa-code"></i></li>
-                        <li><i class="icofont icofont-maximize full-card"></i></li>
-                        <li><i class="icofont icofont-minus minimize-card"></i></li>
-                        <li><i class="icofont icofont-refresh reload-card"></i></li>
-                        <li><i class="icofont icofont-error close-card"></i></li>
-                      </ul>
+             
+                <div class="col-xl-5 col-md-5 box-col-12">
+                    <div class="card" style="background: #fff !important;">
+                        <div class="card-header card-no-border">
+                            <h5>Lastest Activity</h5>
+                            <div class="card-header-right">
+                                <ul class="list-unstyled card-option">
+                                    <li><i class="fa fa-spin fa-cog"></i></li>
+                                    <li><i class="view-html fa fa-code"></i></li>
+                                    <li><i class="icofont icofont-maximize full-card"></i></li>
+                                    <li><i class="icofont icofont-minus minimize-card"></i></li>
+                                    <li><i class="icofont icofont-refresh reload-card"></i></li>
+                                    <li><i class="icofont icofont-error close-card"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body new-update pt-0">
+                            <div class="activity-timeline">
+                                <div class="media">
+                                    <div class="activity-line"></div>
+                                    <div class="activity-dot-primary"></div>
+                                    <div class="media-body"><span>Update Product</span>
+                                        <p class="font-roboto">Quisque a consequat ante Sit amet magna at volutapt.</p>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <div class="activity-dot-primary"></div>
+                                    <div class="media-body"><span>James liked Nike Shoes</span>
+                                         <p class="font-roboto">Aenean sit amet magna vel magna fringilla ferme.</p>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <div class="activity-dot-primary"></div>
+                                    <div class="media-body"><span>john just buy your product</span>
+                                        <p class="font-roboto">Vestibulum nec mi suscipit, dapibus purus.....</p>
+                                    </div>
+                                </div>
+                                <div class="media">
+                                    <div class="activity-dot-primary"></div>
+                                    <div class="media-body"><span>john just buy your product</span>
+                                        <p class="font-roboto">Vestibulum nec mi suscipit, dapibus purus.....</p>
+                                    </div>
+                                </div>
+                             
+                            </div>
+                            <div class="code-box-copy">
+                              <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head5" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
+                             
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="card-body pt-0">
-                    <div class="our-product">
-                      <div class="table-responsive">
-                        <table class="table table-bordernone">
-                            <thead>
-                                <th> Order No </th>
-                                <th> Cutomer Name </th>
-                                <th> Cutomer Email </th>
-                                <th> Total Amount </th>
-                            </thead>
-                          <tbody class="f-w-500">
-                            @foreach($orders as $orderInfo)
+                </div>
+            </div>
+            <div class="row size-column">
+                
+                <div class="col-xl-12 xl-100 box-col-12">
+                    <div class="card customerList">
+                        <div class="card-body pt-0">
+                        <div class="our-products">
+                          <div class="table-responsive">
+                            <table class="table table-bordernone customer_list">
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>Date Of Sign Up</th>
+                                        <th>Email  address</th>
+                                        <th>Monthly Subscription</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                              <tbody class="f-w-500">
+                                @foreach($customerInfo as $customer)
                                 <tr>
                                     <td>
-                                       
-                                      <div class="media-body">
-                                        <p class="font-roboto">{{ $orderInfo->order_number }}  </p>
-                                      </div>
-                                      
+                                        <div class="media">
+                                            @if(!empty($list->photo))
+    		                                    <img src="{{  URL::asset('upload/customer/'.$list->photo)}}" class="img-fluid m-r-15 rounded-circle" style="width: 66px;">
+    		                                @else
+    		                                    <img src="{{  URL::asset('upload/customer/author_4.png')}}" class="img-fluid m-r-15 rounded-circle" style="width: 66px;">
+    		                                @endif
+                                            
+                                            <div class="media-body" style="text-align:left;padding-top:20px">
+                                                <span>{{ $customer->first_name }} </span>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td>
-                                        {{ $orderInfo->customer->first_name }}
+                                  <td>
+                                        <p style="padding-top:33px">@php
+                                            $date = date("F d, Y", strtotime( $customer->created_at));
+                                        @endphp
+                                        {{ $date }}</p>
+                                  </td>
+                                  <td>
+                                        <p style="padding-top:33px">{{ $customer->email }}</p>
+                                  </td>
+                                  <td style="text-align:center">
+                                        <p style="padding-top:33px">@if(!empty($customer->price)) {{ '$'.$customer->price }} @endif</p>
+                                  </td>
+                                  <td>
+                                        <div class="dropdown">
+                                            <button class="button-custom" type="button" id="action_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                . . .
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="action_button">
+                                                 @if($customer->status != 2)
+                                                    <a class="dropdown-item" onClick="SuspendCustomer('{{$customer->id}}','2')" href="javascript:void(0)" style="float: left;font-size: 14px; font-family: 'Nunito Sans', sans-serif;" >Suspend Customers</a>
+                                                @elseif($customer->status == 2)
+                                                    <a class="dropdown-item" onClick="SuspendCustomer('{{$customer->id}}','1')" href="javascript:void(0)" style="float: left;font-size: 14px; font-family: 'Nunito Sans', sans-serif;" >Un-Suspend Customers</a>
+                                                @endif
+                                              
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td>
-                                        {{ $orderInfo->customer->email }}
-                                    </td>
-                                    <td>
-                                        {{ $orderInfo->total_amount }}
-                                    </td>
-                                   
                                 </tr>
-                            @endforeach
-                           
-                          </tbody>
-                        </table>
+                                @endforeach
+                               
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="code-box-copy">
+                          <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head3" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
+                         
+                        </div>
                       </div>
                     </div>
-                    <div class="code-box-copy">
-                      <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head3" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
-                     
-                    </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-xl-12 xl-100 box-col-12">
-                <div class="card">
-                  <div class="card-header card-no-border">
-                    <h5>New Product</h5>
-                    <div class="card-header-right">
-                      <ul class="list-unstyled card-option">
-                        <li><i class="fa fa-spin fa-cog"></i></li>
-                        <li><i class="view-html fa fa-code"></i></li>
-                        <li><i class="icofont icofont-maximize full-card"></i></li>
-                        <li><i class="icofont icofont-minus minimize-card"></i></li>
-                        <li><i class="icofont icofont-refresh reload-card"></i></li>
-                        <li><i class="icofont icofont-error close-card"></i></li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="card-body pt-0">
-                    <div class="our-product">
-                      <div class="table-responsive">
-                        <table class="table table-bordernone">
-                          <tbody class="f-w-500">
-                              @foreach($productInfo as $product)
-                            <tr>
-                              <td>
-                                <div class="media"><img class="img-fluid m-r-15 rounded-circle" src="../assets/images/dashboard-2/product-1.png" alt="">
-                                  <div class="media-body"><span>{{ $product->product_name }} </span>
-                                    <p class="font-roboto">{{ $product->stock }} item</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <p>{{ $product->stock }}</p>
-                              </td>
-                              <td>
-                                <p>{{ $product->stock }}</p>
-                              </td>
-                            </tr>
-                            @endforeach
-                           
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="code-box-copy">
-                      <button class="code-box-copy__btn btn-clipboard" data-clipboard-target="#example-head3" title="Copy"><i class="icofont icofont-copy-alt"></i></button>
-                     
-                    </div>
-                  </div>
-                </div>
-              </div>
-         
             </div>
           </div>
           <!-- Container-fluid Ends-->
@@ -367,7 +272,7 @@
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-6 footer-copyright">
-                <p class="mb-0">Copyright 2018 © Cuba All rights reserved.</p>
+                <p class="mb-0">© Shifti Technologies PTY. LTD. 2023, All rights reserved.</p>
               </div>
               <div class="col-md-6">
                 <p class="pull-right mb-0">Hand crafted & made with <i class="fa fa-heart font-secondary"></i></p>
@@ -375,51 +280,7 @@
             </div>
           </div>
         </footer>
-        <script>
-          var map;
-          function initMap() {
-            map = new google.maps.Map(
-              document.getElementById('map'),
-              {center: new google.maps.LatLng(-33.91700, 151.233), zoom: 18});
-          
-            var iconBase =
-              '../assets/images/dashboard-2/';
-          
-            var icons = {
-              userbig: {
-                icon: iconBase + '1.png'
-              },
-              library: {
-                icon: iconBase + '3.png'
-              },
-              info: {
-                icon: iconBase + '2.png'
-              }
-            };
-          
-            var features = [
-              {
-                position: new google.maps.LatLng(-33.91752, 151.23270),
-                type: 'info'
-              }, {
-                position: new google.maps.LatLng(-33.91700, 151.23280),
-                type: 'userbig'
-              },  {
-                position: new google.maps.LatLng(-33.91727341958453, 151.23348314155578),
-                type: 'library'
-              }
-            ];
-          
-            // Create markers.
-            for (var i = 0; i < features.length; i++) {
-              var marker = new google.maps.Marker({
-                position: features[i].position,
-                icon: icons[features[i].type].icon,
-                map: map
-              });
-            };
-          }
-        </script>
+       
         <script async="" defer="" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGCQvcXUsXwCdYArPXo72dLZ31WS3WQRw&amp;callback=initMap"></script>
       </div>
     </div>
@@ -435,10 +296,10 @@
     <script src="{{ asset('assets/js/sidebar-menu.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
     <!-- Plugins JS start-->
-    <script src="{{ asset('assets/js/chart/chartist/chartist.js') }}"></script>
-    <script src="{{ asset('assets/js/chart/chartist/chartist-plugin-tooltip.js') }}"></script>
-    <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
-    <script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="{{ asset('assets/js/prism/prism.min.js') }}"></script>
     <script src="{{ asset('assets/js/clipboard/clipboard.min.js') }}"></script>
     <script src="{{ asset('assets/js/counter/jquery.waypoints.min.js') }}"></script>
@@ -451,8 +312,98 @@
     <!-- Plugins JS Ends-->
     <!-- Theme js-->
     <script src="{{ asset('assets/js/script.js') }}"></script>
-    <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
+ 
     <!-- login js-->
     <!-- Plugin used-->
+     <script>
+          Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: [
+                    'Sun',
+                    'Mon',
+                    'Tues',
+                    'Wed',
+                    'Thur',
+                    'Fri',
+                    'Sat',
+                 
+                ],
+                gridLineColor: '#ffffff',
+             gridLineWidth: 0,
+                crosshair: false,
+                gridLines: {
+                    display: false // This removes vertical grid lines
+                  }
+            },
+           
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ''
+                },
+                gridLineColor: '#ffffff',
+                gridLineWidth: 0,
+                labels: {
+                    enabled: false
+                  }
+            },
+            credits: {
+                 enabled: false
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                },
+                series: {
+    	             pointWidth: 15,//width of the column bars irrespective of the chart size
+    	             borderRadiusTopLeft: 8,
+                     borderRadiusTopRight: 8
+    	        }
+            },
+            legend: {
+                margintTop:'-40px',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 0,
+                y: 0
+            },
+            colors: [
+                '#007AE5',
+                '#9BA1CC'    
+            ],
+            series: [{
+                name: 'This Week',
+                data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6],
+                type: 'column',
+                borderRadiusTopLeft: 25,
+                borderRadiusTopRight: 25
+        
+            }, {
+                name: 'Last Week',
+                data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0],
+                type: 'column'
+                
+        
+            }]
+        });
+        </script>
   </body>
 </html>

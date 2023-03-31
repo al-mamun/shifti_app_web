@@ -36,7 +36,7 @@
         </div>
         <div class="obd-cont-paragrp-txt" style="margin-top: -9px">
             <h5 style="font-size: 14px;color: #4f4f4f;font-weight: 600;font-family: 'Titillium Web', sans-serif;margin-top: -6px;letter-spacing: 1px;margin-left: 20px;">
-                Hi,  Here.
+                Hi, {{  $data['name'] }}  Here.
             </h5>
             <p style="font-family: 'Titillium Web', sans-serif;font-size: 15px;color: #878787;margin-left: 20px;">
                 We have received your order request for <a href="" style="    margin-left: 6px;font-weight: 600;color: #ff8069;"># </a> <br><br>
@@ -56,7 +56,7 @@
             <h5 style="font-size: 14px;color: #4f4f4f;margin-bottom: 14px;font-weight: 600;font-family: 'Titillium Web', sans-serif;margin-top: -6px;letter-spacing: 1px;margin-left: 20px;">
                 Sincerly,
             </h5>
-            <img src="{{env('API_URL')}}/images/logo.png" alt="logo" style="width: 118px;margin-left: 18px;padding-bottom: 20px;">
+            <img src="https://mamundevstudios.com/shifti_api/public/shifti_logo.png" alt="logo" style="width: 118px;margin-left: 18px;padding-bottom: 20px;">
         </div>
     </div>
     <!-- Content Box -->
@@ -69,11 +69,11 @@
             </h4>
             <div class="obd-cont-ord-txt-rt">
                 <h4 style="font-size: 14px;font-family: 'Titillium Web', sans-serif;font-weight: 400;color: #ec7863;position: absolute;right: 25px;top: -6px;">
-                    Order Total :TK <br>
-                    Delivery Charge :  TK
+                    Order Total : {{ '$'. $data['TotalAmount'] }}  <br>
+                   
                 </h4>
                 <h4 style="font-size: 16px;font-family: 'Titillium Web', sans-serif;font-weight: 700;color: #ff6347;position: absolute;right: 25px;top: -6px;">
-                     Total Payable :  TK
+                     Total Paid : {{ '$'.$data['TotalAmount'] }} 
                 </h4>
             </div>
         </div>
@@ -95,7 +95,7 @@
     <div class="obd-em-footer-main" style="margin-top: 25px;position: relative;">
         <div class="obd-footer-logo">
             <a href="{{env('APP_URL')}}">
-                <img src="{{env('API_URL')}}/images/logo.png" alt="logo" style="width: 140px;margin-left: 18px;padding-bottom: 5px;margin-top: 10px;">
+                <img src="https://mamundevstudios.com/shifti_api/public/shifti_logo.png" alt="logo" style="width: 140px;margin-left: 18px;padding-bottom: 5px;margin-top: 10px;">
             </a>
         </div>
         <div class="obd-footer-rt-cont" style="position: absolute;right: 75px;top: -12px;">
@@ -107,30 +107,13 @@
                     09638-333000
                 </a>
             </h5>
-            <a href="{{env('APP_URL')}}/contact-us" style="background-color: #ff6347;color: #fff;border-radius: 6px;font-size: 11px;font-weight: 600;padding: 4px 16px 4px 16px;font-family: 'Titillium Web', sans-serif;text-decoration: none;">
+            <a href="{{env('APP_WEB_URL')}}/contact-us" style="background-color: #ff6347;color: #fff;border-radius: 6px;font-size: 11px;font-weight: 600;padding: 4px 16px 4px 16px;font-family: 'Titillium Web', sans-serif;text-decoration: none;">
                 Contact Us
             </a>
         </div>
     </div>
     <!-- Footer End -->
-    <!-- Social Icon -->
-    <div class="obd-social-icon-mn" style="text-align: center;margin-top: 38px;margin-bottom: -10px;border-top: 1px solid #e1e1e1;padding-top: 14px;">
-        <ul style="list-style: none;margin: 0px;padding: 0px;">
-            <li style="margin-left: 3px;margin-right: 3px;display: inline-block;">
-                <a href="facebook.com"><i class="fab fa-facebook-f" style="background-color: #3e54aa;color: #ffffff;width: 28px;height: 28px;border-radius: 50px;text-align: center;font-size: 15px;line-height: 28px;"></i></a>
-            </li>
-            <li style="margin-left: 3px;margin-right: 3px;display: inline-block;">
-                <a href="twitter.com"><i class="fab fa-twitter" style="background-color: #60b8ff;color: #ffffff;width: 28px;height: 28px;border-radius: 50px;text-align: center;font-size: 15px;line-height: 28px;"></i></a>
-            </li>
-            <li style="margin-left: 3px;margin-right: 3px;display: inline-block;">
-                <a href="instagram.com"><i class="fab fa-instagram" style="background-color: #f30c7c;color: #ffffff;width: 28px;height: 28px;border-radius: 50px;text-align: center;font-size: 15px;line-height: 28px;"></i></a>
-            </li>
-            <li style="margin-left: 3px;margin-right: 3px;display: inline-block;">
-                <a href="tel:09638-333000"><i class="fab fa-whatsapp" style="background-color: #2AB53E;color: #ffffff;width: 28px;height: 28px;border-radius: 50px;text-align: center;font-size: 15px;line-height: 28px;"></i></a>
-            </li>
-        </ul>
-    </div>
-    <!-- Social Icon -->
+ 
 </div>
 </body>
 </html>

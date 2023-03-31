@@ -19,13 +19,23 @@ class Emailhistory extends Model
         'date'
     ];
     
-    static public function emailSendList($title, $subject, $body,$type) {
+    /**
+     * Email Send List
+     * */
+    static public function emailSendList($name, $subject, $body,$type, $typeId,$companyName, $email=NULL) {
         
-       $emailHistory = new Emailhistory();
-       $emailHistory->title    = $title;
-       $emailHistory->subject  = $subject;
-       $emailHistory->body     = $body;
-       $emailHistory->type     = $type;
-       $emailHistory->save();
+        $emailHistory = new Emailhistory();
+        $emailHistory->name         = $name;
+        $emailHistory->subject      = $subject;
+        $emailHistory->body         = $body;
+        $emailHistory->type         = $type;
+        $emailHistory->type_id      = $typeId;
+        $emailHistory->company_name = $companyName;
+        
+        if(!empty($email)) {
+            $emailHistory->email        = $email;   
+        }
+       
+        $emailHistory->save();
     }
 }

@@ -95,17 +95,17 @@
                                    <form action="{{ url('home-save') }}" id="homeFormSave" method="POST" action="javascript:void(0)" enctype="multipart/form-data">
                                         <div class="row">
             				              <div class="col-md-12 mb-3 form-group">
-            				                <label for="validationDefault01">Title <span style="color:red">*</span></label>
-                                            <input type="text" name="title" class="form-control" placeholder="Enter Title" value="{{ $homePage->title }}">
+            				                <label for="title">Title <span style="color:red">*</span></label>
+            				                 <textarea type="text" name="title" class="summernote" placeholder="Enter Details">{{ $homePage->title }}</textarea>
                                           </div>
             				              <div class="col-md-12 mb-3 mt-3">
-            				                <label for="validationDefault01">Content<span style="color:red">*</span></label>
+            				                <label for="content">Content<span style="color:red">*</span></label>
                                             <textarea type="text" name="content" class="summernote" placeholder="Enter Details">{{ $homePage->content }}</textarea>
                                           </div>
                                         </div>
                                        <div class="row" style="margin-bottom:10px">
                                             <div class="col-md-12 mb-3 form-group">
-                                                <label for="validationDefault01">Thumbnail upload <span style="color:red">*</span></label>
+                                                <label for="thumbnail_uplaod">Thumbnail upload <span style="color:red">*</span></label>
                                                 <div class="holder">
                                                     <img id="imgPreview" src="{{ asset('images/homepage/' . $homePage->thumbnail) }}" alt="pic" />
                                                 </div>
@@ -118,18 +118,18 @@
                 
                                        <div class="row">
                 				              <div class="col-md-12 mb-3 form-group">
-                				                <label for="validationDefault01">Team Title <span style="color:red">*</span></label>
+                				                <label for="team_title">Team Title <span style="color:red">*</span></label>
                                                 <input type="text" name="team_title" class="form-control" placeholder="Enter Team Title" value="{{ $homePage->team_title }}">
                                               </div>
                 				              <div class="col-md-12 mb-3 mt-3">
-                				                <label for="validationDefault01">Team Content<span style="color:red">*</span></label>
+                				                <label for="team_content">Team Content<span style="color:red">*</span></label>
                                                 <textarea type="text" name="team_content" class="summernote" placeholder="Enter Details">{{ $homePage->team_content }}</textarea>
                                               </div>
                                            </div>
                                        <div class="row">
             				           
             				              <div class="col-md-12 mb-3 mt-3">
-            				                <label for="validationDefault01">Team feature<span style="color:red">*</span></label>
+            				                <label for="team_feature">Team feature<span style="color:red">*</span></label>
             				                <input type="text" name="feature" class="form-control" placeholder="Enter feature" value="{{ $homePage->feature }}">
                                             <!--<textarea type="text" name="feature" class="summernote" placeholder="Enter Details">{{ $homePage->feature }}</textarea>-->
                                           </div>
@@ -187,10 +187,11 @@
                                 <div class="tab-pane fade" id="right-hub" role="tabpanel" aria-labelledby="hub-right-tab">
                                     <form action="{{ url('home-save-hub') }}" id="cuztomazationSave" method="POST" action="javascript:void(0)" enctype="multipart/form-data">
                                         <div class="row">
-            				              <div class="col-md-12 mb-3 form-group">
-            				                <label for="validationDefault01">Title <span style="color:red">*</span></label>
-                                            <input type="text" name="hub_title" class="form-control" placeholder="Enter Title" value="{{ $homePage->hub_title }}">
+                                          <div class="col-md-12 mb-3 form-group">
+            				                <label for="hub_title">Title <span style="color:red">*</span></label>
+            				                 <textarea type="text" name="hub_title" class="summernote" placeholder="Enter Details">{{ $homePage->hub_title }}</textarea>
                                           </div>
+            				             
             				              <div class="col-md-12 mb-3 mt-3">
             				                <label for="validationDefault01">Content<span style="color:red">*</span></label>
                                             <textarea type="text" name="hub_content" class="summernote" placeholder="Enter Details">{{ $homePage->hub_content }}</textarea>

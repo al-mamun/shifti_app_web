@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Story;
 use App\Models\StoryTag;
 use App\Models\Brand;
+use App\Models\Customer;
 use App\Models\Settings\Stories;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,10 +15,43 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use URL;
-
+use Illuminate\Support\Facades\Validator;
+use App\Models\Visitors;
 
 class StoryController extends Controller
 {
+    
+    private function get_client_ip() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
+    
+    private function visitorCountPage() {
+        
+        $visitorSave = new Visitors();
+        $visitorSave->page_slug     = 'story'; 
+        $visitorSave->total_visitor = 1;
+        $visitorSave->date          = date('Y-m-d');
+        $visitorSave->user_agent    = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->ip            = $this->get_client_ip();
+        $visitorSave->browser       = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->save();
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -25,12 +59,21 @@ class StoryController extends Controller
      */
     public function index()
     {
-       $stories = Story::latest()->paginate();
-       return view('admin.story.index',compact('stories'));
+        $stories = Story::leftjoin('customers','stories.customer_id','customers.id')
+            ->select('stories.*','customers.first_name','customers.last_name','customers.photo as authorImage')
+            ->get();
+       
+        $customerList = Customer::limit(100)->get();
+        $storyTagList = StoryTag::get();
+        
+        return view('admin.story.index',compact('stories','customerList','storyTagList'));
+       
     }
     
        public function storyApi()
     {
+        $this->visitorCountPage();
+        
         $productInfoArray = [];
 
         $blogs = Story::latest()->paginate();
@@ -113,6 +156,7 @@ class StoryController extends Controller
     public function create()
     {
         $storyTagList = StoryTag::get();
+        
         return view('admin.story.create',[
              'storyTagList'=>$storyTagList
             ]);
@@ -127,17 +171,26 @@ class StoryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'title'       =>'required',
-            'description' =>'required',
-            'slug'        =>'required',
-            'photo'       => 'required|mimes:jpeg,jpg,png|max:5000',
+        
+        $validator = Validator::make($request->all(), [
+            'title'        => 'required',
+            'description'  => 'required',
+            'photo'        => 'required',
         ]);
-
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+       
+        
         $data = $request->all();
-        $data['user_id'] =1;
-        $data['slug']   = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->title)));
-        $data['tags']   = implode(',',$request->tags);
+       
+        $data['user_id'] = 1;
+        $data['slug']    = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->title)));
+        $data['tags']    = implode(',',$request->tags);
 
         $blog_exist_or_not = Story::all()->count();
 
@@ -153,8 +206,6 @@ class StoryController extends Controller
         $path = 'images/uploads/blog/';
         $name = $data['slug'].'-'.$data['slug_id'];
 
-
-
         if ($request->photo) {
             $file = $request->photo;
             $data['photo'] = Helper::uploadImage($name, $height, $width, $path, $file);
@@ -164,7 +215,13 @@ class StoryController extends Controller
 
         Story::create($data);
 
-        return redirect('/admin/stories')->with('success',"Created Successfully");
+            
+        return response()->json([
+            'msg'    => 'New record add succssfully.',
+            'status' => 200,
+        ]);
+   
+     
     }
 
     /**
@@ -184,9 +241,12 @@ class StoryController extends Controller
      * @param  \App\Models\Story  $story
      * @return \Illuminate\Http\Response
      */
-    public function edit(Story $story)
+    public function editCustomerStory(Story $story, $id)
     {
-        //
+        $storyTagList = StoryTag::get();
+        $story        = Story::find($id);
+        $customerList = Customer::limit(100)->get();
+        return view('admin.story.edit_story',compact('story','storyTagList','customerList'));
     }
 
     /**
@@ -196,9 +256,48 @@ class StoryController extends Controller
      * @param  \App\Models\Story  $story
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Story $story)
+    public function updateCustomerStory(Request $request, Story $story)
     {
-        //
+         $validator = Validator::make($request->all(), [
+            'title'        => 'required',
+            'description'  => 'required',
+        ]);
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+        
+        $customerStoryInfo = Story::where('id', $request->id)->first();
+        
+        if ($request->hasfile('photo')) {
+            $cvInfo = $request->photo;
+            $cvd   =  date('ymdh') . rand(0,99999) . $cvInfo->getClientOriginalName();
+            $cvInfo->move(public_path() . $this->documentDirectoryCustomer, $cvd);
+            
+            $customerStoryInfo->photo  = $cvd;
+      
+        }
+ 
+        $customerStoryInfo->customer_id  = $request->customer_id;
+        $customerStoryInfo->title        = $request->title;
+        $customerStoryInfo->date         = $request->date;
+        $customerStoryInfo->description  = $request->description;
+         $customerStoryInfo->tags       = $request->tags;
+        if($customerStoryInfo->save()) {
+
+                
+            return response()->json([
+                'msg'    => 'Update customer story information.',
+                'status' => 200,
+            ]);
+        }
+        return response()->json([
+                'msg'    => 'New record add succssfully.',
+                'status' => 400,
+            ]);
     }
 
     /**
@@ -207,11 +306,28 @@ class StoryController extends Controller
      * @param  \App\Models\Story  $story
      * @return \Illuminate\Http\Response
      */
+  public function viewcustomerStory(Request $request) 
+     {
+         $data = Story::findOrFail($request->id);
+         $customerList = Customer::limit(100)->get();
+            return view('admin.story.view-story',[
+                'data' =>$data,
+                'customerList' =>$customerList
+            ]);
+            
+    }
     public function destroy(int $id)
     {
-        $story = Story::findOrFail($id);
+        /*$story = Story::findOrFail($id);
         Helper::unlinkImage('images/uploads/blog/', $story->photo);
        $story->delete();
+        return redirect()->back()->with(['success' => 'Data Deleted Successfully.']);*/
+    }
+    public function storydelete(int $id)
+    {
+        $story = Story::find($id);
+        Helper::unlinkImage('images/uploads/blog/', $story->photo);
+        $story->delete();
         return redirect()->back()->with(['success' => 'Data Deleted Successfully.']);
     }
 }

@@ -50,20 +50,20 @@
 			            @method('PUT')
 				        <div class="row">
 				            <div class="col-md-6 mb-3">
-				                <label for="validationDefault01">Product Name</label>
-				                <input class="form-control" id="validationDefault01" name="product_name" type="text" placeholder="Product name" data-original-title="" title="Product Name" value="{{$product->product_name}}" />
+				                <label for="product_name">Product Name</label>
+				                <input class="form-control" id="product_name" name="product_name" type="text" placeholder="Product name" data-original-title="" title="Product Name" value="{{$product->product_name}}" />
 				            </div>
 				            <div class="col-md-6 mb-3">
-				                <label for="validationDefault02">Selling Price</label>
-				                <input class="form-control" id="validationDefault02" type="text" placeholder="Selling Price" required="" data-original-title="" name="price" value="{{$product->price}}" />
+				                <label for="selling_price">Selling Price</label>
+				                <input class="form-control" id="selling_price" type="text" placeholder="Selling Price" required="" data-original-title="" name="price" value="{{$product->price}}" />
 				            </div>
 
 				        </div>
 				        <div class="row">
 				           
 				            <div class="col-md-6 mb-3">
-				                <label for="validationDefault02">Discount Price</label>
-				                <input class="form-control" id="validationDefault02" type="text" placeholder="Discount Price" required="" data-original-title="" title="Discount" name="discount_amount" value="{{$product->discount_amount}}"/>
+				                <label for="discount_price">Discount Price</label>
+				                <input class="form-control" id="discount_price" type="text" placeholder="Discount Price" required="" data-original-title="" title="Discount" name="discount_amount" value="{{$product->discount_amount}}"/>
 				            </div>
 				      
 				        	<div class="col-md-6 mb-3">
@@ -103,20 +103,20 @@
 				        </div>
 				      	<div class="row">
 				      		<div class="col-md-12 mb-3">
-			      				<label for="validationDefault02">Descraption</label>
+			      				<label for="description">Descraption</label>
 			                      <textarea  class="summernote" type="text" name="description" id="description">{{$product->description}}</textarea>
 			                </div>
 				      	</div>
 
 				      	<div class="row">
 				            <div class="col-md-6 mb-3">
-				                <label for="validationDefault02">Sku</label>
-				                <input class="form-control" id="validationDefault02" type="text" placeholder="sku" required="" data-original-title="" name="sku" value="{{$product->sku}}"/>
+				                <label for="sku">Sku</label>
+				                <input class="form-control" id="sku" type="text" placeholder="sku" required="" data-original-title="" name="sku" value="{{$product->sku}}"/>
 				            </div>
 
 				            <div class="col-md-6 mb-3">
-				                <label for="validationDefault02">Status</label>
-                                    <label for="validationDefault02">Status<span style="color:red">*</span></label>
+				                <label for="status">Status</label>
+                                    <label for="status">Status<span style="color:red">*</span></label>
                                     <select name="status" id="status" class="form-control form-select" aria-label="Default select example" value="{{old('status')}}">
                                         <option >Select Status</option>
                                         <option value="1" @if($product->status == 1) selected @endif> Publish </option>

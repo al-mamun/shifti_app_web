@@ -7,27 +7,94 @@ use App\Models\Joblist;
 use App\Models\Jobcategory;
 use App\Models\Joblocation;
 use App\Models\JobApplyList;
+use App\Models\Settings\Settings;
 use App\Models\Settings\CareerListing;
 use Illuminate\Http\Request;
 use Auth;
 use Session;
 use Mail;
 use App\Models\Emailhistory;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Visitors;
 
 class JoblistController extends Controller
 {
     protected $documentDirectory          = "/upload/cv/";
+    
+     private function get_client_ip() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
+    
+    private function visitorCountPage() {
         
+        $visitorSave = new Visitors();
+        $visitorSave->page_slug     = 'career'; 
+        $visitorSave->total_visitor = 1;
+        $visitorSave->date          = date('Y-m-d');
+        $visitorSave->user_agent    = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->ip            = $this->get_client_ip();
+        $visitorSave->browser       = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->save();
+    }
+    
+    
     public function aplyJobList() {
         
         $applyjoblists = JobApplyList::leftjoin ('joblists', 'job_apply_list.job_id', '=', 'joblists.id')
-         ->select('job_apply_list.*', 'joblists.job_title','joblists.job_category')
-         ->paginate(100);
-     
+             ->select('job_apply_list.*', 'joblists.job_title','joblists.job_category')
+             ->paginate();
+         
         return view('admin.joblist.aplylist',[
             'applyjoblists' =>$applyjoblists,
         ]);
             
+    }
+     public function viewapplyJobList(Request $request) {
+        
+        $applyjoblists = JobApplyList::leftjoin ('joblists', 'job_apply_list.job_id', '=', 'joblists.id')
+            ->select('job_apply_list.*', 'joblists.job_title','joblists.job_category')
+            ->where('job_apply_list.job_id', $request->job_id)
+            ->latest()
+            ->paginate();
+     
+        return view('admin.joblist.aplylist_view',[
+            'applyjoblists' =>$applyjoblists,
+        ]);
+            
+    }
+    
+    /**
+     * Applicant JobList
+     * 
+     * */
+    public function applicantJoblist(Request $request) {
+        
+        $applyID =  $request->applyID;
+        
+        $applyjoblists = JobApplyList::leftjoin ('joblists', 'job_apply_list.job_id', '=', 'joblists.id')
+         ->select('job_apply_list.*', 'joblists.job_title','joblists.job_category')
+         ->where('job_apply_list.id', $applyID)
+         ->first();
+     
+        return view('admin.joblist.aplication',[
+            'applyjoblists' =>$applyjoblists,
+        ]);
+      
     }
     
     public function jobOpenCategoryList(Request $request) {
@@ -50,11 +117,8 @@ class JoblistController extends Controller
                 'slug'         => $jobInfo->slug,
                 'location'     => $jobInfo->job_location,
                 'subtitle'     => $jobInfo->job_category,
-                
                 'type'         => '',
                 'team'         =>'test',
-                
-
             ];
         }
 
@@ -119,6 +183,7 @@ class JoblistController extends Controller
     
     public function jobPageContent(Request $request) {
         
+        $this->visitorCountPage();
         
         $status =  $request->status;
         
@@ -164,28 +229,49 @@ class JoblistController extends Controller
             // $jobListInfo->cover_letter     = $request->cover_letter;
             $jobListInfo->expected_salary  = $request->salary;
             $jobListInfo->job_id           = $request->job_id;
+            $jobListInfo->email            = $request->email;
+            $jobListInfo->phone            = $request->phone;
+            $jobListInfo->location         = $request->location;
+            $jobListInfo->message          = $request->message;
             $jobListInfo->attachment       = $cvd;
           
-            if($files=$request->file('cv')){  
+            if($files=$request->file('cv')) {  
                 $name=$files->getClientOriginalName();  
                 $files->move('images',$name);  
             }  
             
             if($jobListInfo->save()) {
                 
-                $data = array('name'=>"Shifti");
+                $settingInfo = Settings::first();
+                
+                $title = 'Apply For'. $joblistInfo->job_title;
+                
+                $joblistInfo = Joblist::find($request->job_id);
+                
+                $data = array(
+                    'name'         => "Shifti", 
+                    'type'         => "Job", 
+                    'message'      => $jobListInfo->message, 
+                    'email'        => $settingInfo->admin_email,
+                    'job_title'    => $joblistInfo->job_title,
+                    'email_title'  => $title,
+                );
+                
+                
                 Mail::send(['html' => 'emails.job_mail'], compact('data'), function($message) use ($data) {
-                 $message->to('ratonkumarcse@gmail.com', 'Job apply list')->subject
+                 $message->to($data['email'], $data['email_title'])->subject
                     ('Apply for job');
                  $message->from('shifti@mamundevstudios.com','Shifti');
                 });  
                 
+                Emailhistory::emailSendList($request->fullName,  $title, $jobListInfo->message,  3, $jobListInfo->id,'');// 3 job type
+                
             }
             // $request->fullName,$request->email,$request->email message
-            Emailhistory::emailSendList($request->fullName, '', $request->cover_letter, 3);
+            
             
             $jobOpenArray = [
-                'status' => 100,
+                'status' => 200,
                 'message' => "Successfully send data",
             ];
             return json_encode($jobOpenArray);
@@ -198,13 +284,31 @@ class JoblistController extends Controller
      */
     public function index()
     {
+       
+        $pendingJob     = Joblist::where('status', 0)->latest()->paginate(2);
+        $openJob        = Joblist::where('status', 1)->latest()->paginate(2);
+        $approvedJob    = Joblist::where('status', 2)->latest()->paginate(2);
+        $joblocations   = Joblocation::get();
+        $jobcategories  = Jobcategory::get();
         
-         $joblists = Joblist::latest()->paginate(5);
-         
-         print_r(Session::get('key'));
-         return view('admin.joblist.index',compact('joblists'));
+         return view('admin.joblist.index',compact('pendingJob','openJob','approvedJob','joblocations','jobcategories'));
     }
 
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function jobAll()
+    {
+        $allJob         = Joblist::latest()->get();
+        $joblocations   = Joblocation::get();
+        $jobcategories  = Jobcategory::get();
+        
+        return view('admin.joblist.all',compact('allJob','joblocations','jobcategories'));
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -220,6 +324,56 @@ class JoblistController extends Controller
            'joblocations'  => $joblocations,
         ]);
     }
+    
+    public function editJoblist(Request $request) {
+        
+        $jobList = Joblist::find($request->id);
+        
+        $joblocations  = Joblocation::get();
+        $jobcategories = Jobcategory::get();
+       
+        return view('admin.joblist.job-edit',[
+           'jobcategories' => $jobcategories,
+           'joblocations'  => $joblocations,
+           'jobList'       => $jobList,
+        ]);
+        
+        
+    }
+    
+    public function adminJoblistUpdate(Request $request) {
+        
+        $validator = Validator::make($request->all(), [
+            'title'        => 'required',
+            'job_category' => 'required',
+            'term'         => 'required',
+            'job_location' => 'required',
+        ]);
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+       
+         
+        $joblist =  Joblist::find($request->id);
+        $joblist->job_title = $request->title;
+        $joblist->slug              = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->title)));
+        $joblist->type              = $request->term;
+        // $joblist->date      =     $request->date;
+        // $joblist->expire_date   = $request->expire_date;
+        $joblist->job_location       = $request->job_location;
+        $joblist->job_category       = $request->job_category;
+        // $joblist->why_to_apply    = $request->why_to_apply;
+        $joblist->descraption        = $request->descraption;
+        $joblist->save();
+        
+         return response()->json(['success' => 'Post created successfully.']);
+        
+    }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -229,6 +383,8 @@ class JoblistController extends Controller
      */
     public function store(Request $request)
     {
+      
+        
         $this->validate($request, [
             'job_title' => 'required',
             'job_location' => 'required',
@@ -257,6 +413,7 @@ class JoblistController extends Controller
         $joblist->descraption = $request->descraption;
         $joblist->save();
         return redirect('/admin/joblist')->with('success',"Joblist Created Successfully");
+        
     }
 
     /**
@@ -453,7 +610,13 @@ class JoblistController extends Controller
      */
     public function destroy(Joblist $joblist)
     {
-         $joblist->delete();
-         return redirect('/admin/joblist')->with('success',"Joblist Deleted Successfully");
+       /*  $joblist->delete();
+         return redirect('/admin/joblist')->with('success',"Joblist Deleted Successfully");*/
+    } 
+    public function jobdelete(int $id)
+    {
+        $joblist = Joblist::find($id);
+        $joblist->delete();
+        return redirect()->back()->with(['success' => 'Data Deleted Successfully.']);
     }
 }

@@ -56,7 +56,7 @@
                             <tbody>
                                 @php $totalAmout = 0; @endphp
                                 @foreach($orderProduct as $key=>$productInfo)
-                                    @php  $totalAmout += $orderProduct[$key]['quantity'] * $orderProduct[$key]['price']; @endphp
+                                    @php  $totalAmout += $orderProduct[$key]['quantity'] * $orderProduct[$key]['price'] + $orderProduct[$key]['service_charge']; @endphp
                                 <tr>
                                     <td class="left strong">1</td>
          
@@ -64,7 +64,7 @@
                                     <td class="right">{{ $orderProduct[$key]['quantity'] }}</td>
                                     <td class="center">{{ $orderProduct[$key]['price'] }}</td>
 
-                                    <td class="right">{{$orderProduct[$key]['quantity'] * $orderProduct[$key]['price'] }}</td>
+                                    <td class="right">$ {{ $orderProduct[$key]['quantity'] * $orderProduct[$key]['price'] + $orderProduct[$key]['service_charge'] }}</td>
                                 </tr>
                                 @endforeach
    
@@ -79,22 +79,17 @@
                                 <tbody>
                                 <tr>
                                     <td class="left">
-                                    <strong class="text-dark">Subtotal</strong>
+                                        <strong class="text-dark">Subtotal</strong>
                                     </td>
-                                    <td class="right">{{ $totalAmout }}</td>
+                                    <td class="right">${{ $totalAmout }}</td>
                                 </tr>
-                                <tr>
-                                    <td class="left">
-                                    <strong class="text-dark">Discount (0%)</strong>
-                                    </td>
-                                    <td class="right">0</td>
-                                </tr>
+                               
                                 <tr>
                                     <td class="left">
                                     <strong class="text-dark">Total</strong>
                                      </td>
                                     <td class="right">
-                                    <strong class="text-dark">{{ $totalAmout }}</strong>
+                                    <strong class="text-dark">${{ $totalAmout }}</strong>
                                     </td>
                                 </tr>
                                 </tbody>

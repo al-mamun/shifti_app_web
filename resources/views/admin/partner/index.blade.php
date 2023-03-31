@@ -17,7 +17,7 @@
             <div class="col-sm-12">
                 <div class="card">
                   <div class="card-header">
-                    <h5>Job List</h5>
+                    <h5>Partner List</h5>
                   </div>
                   <div class="card-body">
                     <div class="table-responsive">
@@ -34,8 +34,9 @@
 		                         <tr>
 		                            <td>{{ $key+1 }}</td>
 		                            <td>{{ $partnerList->partner_name }}</td>
-		                            <td>{{ $partnerList->partner_icon }}</td>
-		                            
+		                            <td>
+                                        <img src="{{  URL::asset('images/partner/' . $partnerList->partner_icon)}}" width="100px">
+                                     </td>
 		                            <td>
 		                            	 <form class="text-center" action="{{route('partner.destroy',$partnerList->id)}}" method="POST">
 					                      <a class="btn-primary btn-sm text-white" href="{{route('partner.edit',$partnerList->id)}}" title="">

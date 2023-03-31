@@ -16,7 +16,8 @@ class StoriesController extends Controller
     }
     public function storiesSave(Request $request){
         
-         $this->validate($request, [
+        
+        $this->validate($request, [
             'page_title' => 'required',
           
           
@@ -38,5 +39,10 @@ class StoriesController extends Controller
         }
         $storiesSave->save();
         return redirect('admin/home?status=success')->back()->with('success','save succesfully');
+    }
+    
+    
+    public function store(Request $request) {
+        return 100;
     }
 }

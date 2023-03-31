@@ -30,16 +30,11 @@
             <div class="card">
 			   <div class="card-body">
 			        <div class="row">
-        	            <div class="col-lg-6">
+        	            <div class="col-md-8">
         	              	<h3>Menage Orders</h3>
         	            </div>
-        	        </div>
-                    <div class="row">
-        	          
-        	        </div>
-                  	<div class="row">
-        	            <div class="col-md-12 mt-3 custom-btn">
-        	              	<span><a href="#"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print</a></span>
+        	             <div class="col-md-2">
+        	              	<span class="pull-right"><a href="#" class="btn btn-primary"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print</a></span>
         	              	<!--<span><a href="#"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Shipping Label</a></span>-->
         	               <!-- <span><a href="#">Export&nbsp;&nbsp;<i class="fa fa-arrow-down" aria-hidden="true"></i></a> </span>-->
     	            
@@ -83,18 +78,18 @@
                               <option value="1">Ready to ship</option>
                             </select> 
         	            </div>
-        	            <div class="col-md-5 mt-3 custom-btn">
-        	              	 <a href="#">Apply</a> 
+        	            <div class="col-md-5 mt-3">
+        	              	 <a href="#" class="btn btn-primary">Apply</a> 
         	            </div>
         	            <div class="col-md-3 mt-3">
-        	              	   <div class="input-group">
+        	              	<!--   <div class="input-group">
     	                          <input type="text" class="form-control" placeholder="Search">
     	                          <div class="input-group-append">
                                     <button type="button">
                                      <i class="fa fa-search"></i>
                                     </button>
                                   </div>
-                              </div>
+                              </div>-->
         	            </div>
     	            </div>
 			    <div class="card-body">
@@ -113,6 +108,7 @@
 		                  <th width="100">ACTION</th>
 		              </tr>
 		             @foreach($orderList as $key=>$data)
+		                @if(isset($data->customer->first_name))
 		               <tr>
 		                  <td><span style="display:none">{{ $key+1 }} </span> <input class="form-check-input" type="checkbox" value="" id="defaultCheck1"></td>
 		                  <td>{{ $data->order_number }}</td>
@@ -121,7 +117,7 @@
 		                  <td>{{ $data->customer->email }}</td>
 		                  <td>{{ $data->customer->address }}</td>
 		                  <td>Paid</td>
-		                  <td>{{ $data->total }}</td>
+		                  <td>$ {{ $data->total_amount + 25.50 }}</td>
 		                  <td>Pending</td>
 		                  <td>
 		                      <a href="{{route('order.show',$data->id)}}" class="btn-light btn-sm"><i class="fa fa-eye" aria-hidden="true"></i></a> 
@@ -129,6 +125,7 @@
 		                      <a href="#" id="delete" class="btn-light btn-sm"><i class="fa fa-print" aria-hidden="true"></i></a> 
 		                  </td>
 		                </tr>
+		                @endif
 		              @endforeach
 		          </table>
 	           </div>

@@ -50,7 +50,6 @@
                                     <th>CUST NAME</th>
                                     <th>MOBILE</th>
                                     <th>ADDRESS</th>
-                                    <th class="right">PAYMENT</th>
                                     <th class="right">TOTAL</th>
                                 </tr>
                             </thead>
@@ -61,8 +60,7 @@
                                     <td class="left">{{ $order->customer->first_name  }}</td>
                                     <td class="right">{{ $order->customer->phone }}</td>
                                     <td class="center">{{ $order->customer->address }}</td>
-                                    <td class="right">100</td>
-                                    <td class="right">100</td>
+                                    <td class="right">{{ $order->total + 25.50 }}</td>
                                 </tr>
    
                             </tbody>
@@ -91,7 +89,7 @@
                                     <strong class="text-dark">Total</strong>
                                      </td>
                                     <td class="right">
-                                    <strong class="text-dark">100</strong>
+                                    <strong class="text-dark">{{ $order->total + 25.50 }}</strong>
                                     </td>
                                 </tr>
                                 </tbody>

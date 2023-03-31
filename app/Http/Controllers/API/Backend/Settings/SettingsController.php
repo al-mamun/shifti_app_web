@@ -23,15 +23,7 @@ class SettingsController extends Controller
         echo "HTML Email Sent. Check your inbox.";
         
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    } 
+   
 
 
       public function contactApi()
@@ -93,99 +85,71 @@ class SettingsController extends Controller
          return json_encode($productInfoArray);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Settings\Settings  $settings
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Settings $settings)
-    {
-       //
-    }
+   
     public function adminSetUp(Settings $settings)
     {
         $setup = Settings::first();
+        
         return view('admin.settings.setup.save',compact('setup'));
     }
 
     public function adminSetUpStore(Request $request, Settings $settings)
     {
         $this->validate($request, [
-            'logo' => 'required|mimes:jpeg,jpg,png|max:5000',
-            'retina_logo' => 'required|mimes:jpeg,jpg,png|max:5000',
-            'copyright' => 'required',
+            // 'logo'         => 'required|mimes:jpeg,jpg,png|max:5000',
+            // 'retina_logo'  => 'required|mimes:jpeg,jpg,png|max:5000',
+            'copyright'    => 'required',
         ]);
 
         $setup = Settings::first();
-        $setup->copyright = $request->copyright;
+        $setup->copyright   = $request->copyright;
+        $setup->admin_email = $request->admin_email;
         
-          if($image=$request->file(['logo','retina_logo'])){
+        $destinationPath = public_path('images/global/');
+        
+        if($image = $request->file('logo')){
 
-            $destinationPath = public_path('images/logo/');
+          
             $logoImage    = date('YmDHis').".".$image->getClientOriginalExtension();
             $image->move($destinationPath, $logoImage);
-            $setup['logo']=$logoImage;
-            $setup['retina_logo']=$logoImage;
+            $setup->logo         = $logoImage;
+            // $setup['retina_logo']=$logoImage;
 
         }
- /*       $height = 250;
-        $width = 250;
-        $path = 'images/logo/';
-        $name = $setup['slug'].'-'.$setup['slug_id'];
-        if ($request->logo) {
-            $file = $request->logo;
-            $setup['logo'] = Helper::uploadImage($name, $height, $width, $path, $file);
-        }else {
-            $setup['logo'] = null;
-        }*/
+        
+         if($image = $request->file('footer_logo')){
+
+            
+            $logoImageFotter    = date('YmDHis').".".$image->getClientOriginalExtension();
+            $image->move($destinationPath, $logoImageFotter);
+            $setup->footer_logo         = $logoImageFotter;
+            // $setup['retina_logo']=$logoImage;
+
+        }
+
         $setup->save();
-        return redirect()->back()->with('success','contact save succesfully');
+        return redirect()->back()->with('success','Data save succesfully');
+    }
+    
+    
+    /**
+     * Global Api
+     * */
+    public function settingApi() {
+        
+        $setup = Settings::first();
+         
+        $settingApi = [
+            'copyright_text'    => 'Phone',
+            'logo'              => asset('images/global/' . $setup->logo),
+            'footer_logo'              => asset('images/global/' . $setup->footer_logo),
+            'ratina_logo'       => '',
+        ];
+        
+         return json_encode($settingApi);
+        
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Settings\Settings  $settings
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Settings $settings)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Settings\Settings  $settings
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Settings $settings)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Settings\Settings  $settings
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Settings $settings)
-    {
-        //
-    }
+   
     
 }

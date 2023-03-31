@@ -24,11 +24,44 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
 use Input;
+use App\Models\Visitors;
 
 class ProductController extends Controller
 {
-
+    
+    private function get_client_ip() {
+        $ipaddress = '';
+        if (isset($_SERVER['HTTP_CLIENT_IP']))
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_X_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+        else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+        else if(isset($_SERVER['HTTP_FORWARDED']))
+            $ipaddress = $_SERVER['HTTP_FORWARDED'];
+        else if(isset($_SERVER['REMOTE_ADDR']))
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        else
+            $ipaddress = 'UNKNOWN';
+        return $ipaddress;
+    }
+    
+    private function visitorCountPage() {
+        
+        $visitorSave = new Visitors();
+        $visitorSave->page_slug     = 'price'; 
+        $visitorSave->total_visitor = 1;
+        $visitorSave->date          = date('Y-m-d');
+        $visitorSave->user_agent    = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->ip            = $this->get_client_ip();
+        $visitorSave->browser       = $_SERVER["HTTP_USER_AGENT"];
+        $visitorSave->save();
+    }
+    
     public function create() {
         
         $categoryList = Category::get();
@@ -79,19 +112,122 @@ class ProductController extends Controller
     {
         $status = $request->get('status');
         $categoryList = Product::get();
-        $productList = Product::leftjoin('categories','products.category_id', '=', 'categories.id')
-             ->select('products.*', 'categories.slug', 'categories.category_name')
-             ->latest()
-             ->paginate(10);
+        
+        $productList = ProductSubscription::latest()
+            ->get();
 
-        return view('admin.product.index',compact('productList'),[
+        return view('admin.product.index', compact('productList'),[
             'categoryList' => $categoryList,
-            'status'        => $status,
+            'status'       => $status,
+            'type'         => 3,
         ]);
 
         
     }
-
+    
+    /**
+     * Product submit
+     * */
+    public function productSubmit(Request $request) {
+        
+        $validator = Validator::make($request->all(), [
+            'product_title'    => 'required',
+            'price'            => 'required',
+            'product_image'    => 'required',
+        ]);
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+        if ($image = $request->file('product_image')) {
+            
+            $destinationPath = 'images/uploads/products_thumb/';
+            $productImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            
+            $image->move($destinationPath, $productImage);
+            
+            $input['product_image'] = $productImage;
+        }
+        
+        $productSubcraption = new ProductSubscription();
+        $productSubcraption->product_id   = 1101;
+        $productSubcraption->title       = $request->product_title;
+        $productSubcraption->sub_title   = $request->description;
+        $productSubcraption->type        = $request->type;
+        $productSubcraption->price       = $request->price;
+        $productSubcraption->thumbnail   = $input['product_image'];
+        
+        if($productSubcraption->save()) {
+            
+            return response()->json([
+                'msg'    => 'Add new record succssfully.',
+                'status' => 200,
+            ]);
+   
+        }
+        return response()->json([
+            'msg'    => 'Something want wrong.',
+            'status' => 400,
+        ]);
+      
+    }
+    
+    public function productUpdate(Request $request) {
+        
+        $validator = Validator::make($request->all(), [
+            'product_title'    => 'required',
+            'price'            => 'required',
+        ]);
+  
+         if ($validator->fails()) {
+            return response()->json([
+                'error' => $validator->errors()->all()
+            ]);
+        }
+       
+        if ($request->hasFile('product_image')) {
+            $image= $request->file('product_image');
+            
+            $destinationPath = 'images/uploads/products_thumb/';
+            $productImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            
+            $image->move($destinationPath, $productImage);
+            
+            $input['product_image'] = $productImage;
+        }
+        
+        $productSubcraption =  ProductSubscription::where('id', $request->product_id)->first();
+        if(!empty($productSubcraption)) {
+            
+            $productSubcraption->title       = $request->product_title;
+            $productSubcraption->sub_title   = $request->description;
+            $productSubcraption->type        = $request->type;
+            $productSubcraption->price       = $request->price;
+            
+            if ($request->hasFile('product_image')) {
+                $productSubcraption->thumbnail   = $input['product_image'];
+            }
+            
+            if($productSubcraption->save()) {
+                
+                return response()->json([
+                    'msg'    => 'Add new record succssfully.',
+                    'status' => 200,
+                ]);
+       
+            }
+        }
+        
+        return response()->json([
+            'msg'    => 'Something want wrong.',
+            'status' => 400,
+        ]);
+    }
+    
+    
     public function productList() {
 
         $productList = Product::leftjoin('categories','products.category_id', '=', 'categories.id')
@@ -116,7 +252,7 @@ class ProductController extends Controller
                     'slug'      => $productInfo->slug,
                     'media'     => 'https://mamundevstudios.com/shifti_api/public/images/uploads/products_thumb/'. $productListInfo->product_photo,
                     'price'     => $productInfo->price,
-                    'type'     => $productInfo->type,
+                    'type'      => $productInfo->type,
                 ];  
             }
            
@@ -179,7 +315,8 @@ class ProductController extends Controller
 
         return json_encode($productInfoArray);
     }
-     public function frontendCategoryTotalProducts($categorySlug, $page) {
+    
+    public function frontendCategoryTotalProducts($categorySlug, $page) {
         
         if($categorySlug == 'all' || $categorySlug == 'latest' ) {
             
@@ -236,6 +373,8 @@ class ProductController extends Controller
     
     public function frontendCategoryTotalProduct($categorySlug) {
         
+        
+        
         if($categorySlug == 'all' || $categorySlug == 'latest') {
             
             $productList = Product::leftjoin('categories','products.category_id', '=', 'categories.id')
@@ -278,9 +417,6 @@ class ProductController extends Controller
         return json_encode($productInfoArray);
     }
     
-    
-    
-    
     public function featuredproductList() {
 
         $productList = Product::leftjoin('categories','products.category_id', '=', 'categories.id')
@@ -320,7 +456,8 @@ class ProductController extends Controller
              ->where('type', 2)
              ->orderBy('id','desc')
              ->paginate(10);
-
+        
+        $this->visitorCountPage();
 
         $productInfoArray = [];
 
@@ -373,58 +510,81 @@ class ProductController extends Controller
          return json_encode($productInfoArray);
     }
     
-    public function subscriptionProduct($slug) {
+    public function subscriptionProduct(Request $request,$slug) {
         
-      
+           $this->visitorCountPage();
         $productList = Product::leftjoin('categories','products.category_id', '=', 'categories.id')
              ->select('products.*', 'categories.slug', 'categories.category_name')
              ->where('products.slug', $slug)
              ->orderBy('products.id','desc')
              ->get();
-
-    
+      
         $productInfoArray = [];
         $productChild    = [];
-            $array = [];
+            
         foreach( $productList as $productInfo) {
             
             $productListInfo = ProductPhoto::where('product_id', $productInfo->id)->first();
-            $productSubcraption = ProductSubscription::where('product_id', $productInfo->id)->get();
             
-            foreach($productSubcraption as $productSubcationList){
+               if(!empty($request->is_homepage)) {
+                    $productSubcraption = ProductSubscription::where('product_id', $productInfo->id)
+                        ->where('is_homepage', 1)
+                        ->orderBy('id','desc')
+                        ->get();
+                }  else if(!empty($request->is_product_page)) {
+                    $productSubcraption = ProductSubscription::where('product_id', $productInfo->id)
+                        ->where('is_product_display', 1)
+                        ->orderBy('id','desc')
+                        ->get();
+                }  else if(!empty($request->is_ultimate_product)) {
+                    
+                    $productSubcraption = ProductSubscription::where('product_id', $productInfo->id)
+                        ->where('id', 3)
+                        ->orderBy('id','desc')
+                        ->get();
+                }  else{
+                    
+                    $productSubcraption = ProductSubscription::where('product_id', $productInfo->id)
+                        ->orderBy('id','desc')
+                        ->get();
+                }
+            foreach($productSubcraption as $key=>$productSubcationList) {
                  
                 $explodeInfo = explode(',', $productSubcationList->fetuare);
-                
+                $array = [];
                 foreach($explodeInfo as $explode) {
                     $array[] = [ 'module_title'=> $explode];
                 }
                 
                 $productSubcraption1 = json_encode($array);
+                
                 $productChild[]=[
-                    'product_id' => $productSubcationList->id,
+                    'product_id' => $productInfo->id,
+                    'id' => $productSubcationList->id,
                     'price'      => $productSubcationList->price,
+                    'annual'      => round(((($productSubcationList->price*12)/100)*90),2),
+                    'monthly'    => $productSubcationList->price,
                     'title'      => $productSubcationList->title,
                     'sub_title'  => $productSubcationList->sub_title,
                     'type'       => $productSubcationList->type,
-                    'module'     => $array,
+                    'is_active'  => $productSubcationList->is_active,
+                    'module'     =>  $array,
                 ];
                 
                
             }
             
-            
-
             if(!empty($productListInfo->product_photo)) {
                 $productInfoArray =[
-                    'productID' => $productInfo->id,
-                    'title'  => $productInfo->product_name,
-                    'content'  => $productInfo->description,
+                    'productID'  => $productInfo->id,
+                    'title'      => $productInfo->product_name,
+                    'content'    => $productInfo->description,
                     'sub_title'  => $productInfo->product_name,
-                    'slug'  => $productInfo->slug,
-                    'media' => 'https://mamundevstudios.com/shifti_api/public/images/uploads/products_thumb/'. $productListInfo->product_photo,
-                    'product' => $productChild,
-                    'btnText' => 'Get basic',
-                    'type'    => $productInfo->type,
+                    'slug'       => $productInfo->slug,
+                    'media'      => 'https://mamundevstudios.com/shifti_api/public/images/uploads/products_thumb/'. $productListInfo->product_photo,
+                    'product'    => $productChild,
+                    'btnText'    => 'Get basic',
+                    'type'       => $productInfo->type,
                 ];  
             }
            
@@ -913,6 +1073,11 @@ class ProductController extends Controller
             $product->delete();
            return redirect()->back()->with(['success' => 'Data Deleted Successfully.']);
         
+    }
+    
+    public function productDelete(Request $request) {
+        
+        ProductSubscription::find($request->id)->delete();
     }
 
 

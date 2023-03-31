@@ -17,8 +17,10 @@ use App\Mail\OrderConfirmationMail;
 use App\Models\Address;
 use App\Models\BuyNow;
 use App\Models\ProductSubscription;
+use App\Models\CustomerPackage;
 use App\Models\Cart;
 use App\Models\CustomerAddress;
+use App\Models\CustomerShippingAddress;
 use App\Models\Delivery\DeliveryZone;
 use App\Models\Order;
 use App\Models\OrderDeliveryCharge;
@@ -33,6 +35,7 @@ use Illuminate\Support\Facades\Validator;
 use Stripe\Exception\CardException;
 use Stripe\StripeClient;
 use Session;
+use App\Models\Emailhistory;
 
 class OrderController extends Controller
 {
@@ -44,6 +47,7 @@ class OrderController extends Controller
     public function index()
     {
         $customerID  =  Session::get('customer_id');
+        
         $orders = Order::with(['customer', 'address', 'address.city', 'address.zone', 'address.area','order_product', 'shipping_status', 'payment_status', 'delivery_charge'])
             ->latest()
             ->where('customer_id', auth()->user()->id)
@@ -52,16 +56,40 @@ class OrderController extends Controller
         return GroceryOrderListResource::collection($orders);
     }
     
+    public function getMyActivePackage()
+    {
+        $customerID  =  Session::get('customer_id');
+        
+        $orders = CustomerPackage::where('customer_id', auth()->user()->id)
+            ->leftjoin('subscription_product','customer_package.package_id','subscription_product.id')
+            ->orderBy('customer_package.id','desc')
+            ->first();
+        return json_encode($orders);
+        
+
+    }
+    
+     public function totalOrderAmount()
+    {
+        $customerID  =  Session::get('customer_id');
+        
+        $orders = Order::where('orders.customer_id', auth()->user()->id)
+            ->leftjoin('order_products','orders.id','=','order_products.order_id')
+            ->sum('order_products.price');
+        
+        return $orders;
+    }
+    
     private function createCharge($tokenId, $amount)
     {
         $charge = null;
-        
+        print_r($amount);
         $stripe = new \Stripe\StripeClient(
             'sk_test_51MQ8LkCmraN7g8Nsj6a6WojRbh10RaI308lVosXRgU15keYKFcaOwGXbIxYeBEv9S8gHZ3WdVR4Kb1qyYM8jNLEj00Xk8iUIby'
         );
         try {
             $charge = $stripe->charges->create([
-                'amount' => $amount,
+                'amount' => $amount*100,
                 'currency' => 'usd',
                 'source' => $tokenId,
                 'description' => 'My first payment'
@@ -188,6 +216,7 @@ class OrderController extends Controller
                     $order_data['customer_address_id'] = (int) $address_id;
                     $order_data['customer_id']         = auth()->user()->id;
                     $order_data['order_number']        = OrderController::generate_order_number();
+                   
                     $order_data['payment_status_id']   = 2;
                     $order_data['payment_method_id']   = 1;
                     $order_data['product_type_id']     = 1;
@@ -236,6 +265,7 @@ class OrderController extends Controller
     
              
             }
+            
           
             $charge = $this->createCharge($token['id'], $order_amount);
             
@@ -338,13 +368,11 @@ class OrderController extends Controller
     public function subcriptionPlaceOrder(Request $request)
     {
         
-       
         $validator = $request->validate([
             'email'      => 'required|email',
             'fullName'   => 'required',
             'zip_code'   => 'required',
             'address'    => 'required',
-            // 'first_name' => 'required',
             'cardNumber' => 'required',
             'month'      => 'required',
             'year'       => 'required',
@@ -369,7 +397,6 @@ class OrderController extends Controller
             $carts = Cart::with(['product', 'product.primary_photo', 'product.parent_product'])
                     ->where('customer_id', auth()->user()->id)
                     ->where('status', 0)
-                    ->where('type', 2)
                     ->limit(1)
                     ->latest()
                     ->get();
@@ -382,46 +409,44 @@ class OrderController extends Controller
             
             if (count($carts) > 0) {
     
-                        $get_product_type_id = Cart::where('customer_id', auth()->user()->id)->first();
-    
-           
-                        $carts = Cart::where('customer_id', auth()->user()->id)->where('type', 2)
-                            ->limit(1)
-                            ->with('product')->get();
-                            
-                        // $carts = Cart::with('product')->where('selected', 1)->get();
-                        $quantity             = 0;
-                        $total                = 0;
-                        $after_discount_total = 0;
-                        $product_type_id      = 1;
-                         $order_amount        = 0;
-                        foreach ($carts as $cart) {
-                            $productSubcraption = ProductSubscription::where('id', $cart->subscriber_id)->first();
-                            
-                            $product_type_id  = $cart->product_type_id;
-                            $quantity         = 1;
-                            $total            = ($productSubcraption->price ) * 1;
-                            $temp_after_discount_amount = $productSubcraption->price;
-                            
-                            if ($cart->product->discount_amount != null) {
-                                $temp_after_discount_amount = $productSubcraption->price;
-                            }
-                            
-                            if ($cart->product->discount_percent != null and $cart->product->discount_percent > 0) {
-                                $temp_after_discount_amount = $temp_after_discount_amount - ($temp_after_discount_amount * $cart->product->discount_percent) / 100;
-                            }
-                            $after_discount_total =  $temp_after_discount_amount * 1;
-                        }
+                    $get_product_type_id = Cart::where('customer_id', auth()->user()->id)->first();
 
+       
+                    $carts = Cart::where('customer_id', auth()->user()->id)
+                        ->limit(1)
+                        ->with('product')
+                        ->limit(1)
+                        ->latest()
+                        ->get();
+                        
+                    // $carts = Cart::with('product')->where('selected', 1)->get();
+                    $quantity             = 0;
+                    $total                = 0;
+                    $after_discount_total = 0;
+                    $product_type_id      = 1;
+                    $order_amount        = 0;
                     
-                    
-                    // $summary['subTotal']                     = $total;
-                    // $summary['discount']                     = $total - $after_discount_total;
-                    // $summary['after_discount_total']         = $after_discount_total;
-                    // $summary['quantity']                     = $quantity;
-                    // $summary['totalAmount']                  = $total ;
-                    // $summary['totalAmountDeliveryNotCharge'] = $total ;
-                    // $summary['product_type_id'];
+                    foreach ($carts as $cart) {
+                        
+                        $productSubcraption = ProductSubscription::where('id', $cart->subscriber_id)->first();
+                        
+                        $product_type_id  = $cart->product_type_id;
+                        $quantity         = 1;
+                        $total            = $cart->price ;
+                        $temp_after_discount_amount = $productSubcraption->price;
+                        
+                        if ($cart->product->discount_amount != null) {
+                            $temp_after_discount_amount = $productSubcraption->price;
+                        }
+                        
+                        if ($cart->product->discount_percent != null and $cart->product->discount_percent > 0) {
+                            $temp_after_discount_amount = $temp_after_discount_amount - ($temp_after_discount_amount * $cart->product->discount_percent) / 100;
+                        }
+                        $after_discount_total =  $temp_after_discount_amount * 1;
+                        
+                    }
+
+
                     $order_data['customer_address_id'] = (int) $address_id;
                     $order_data['customer_id']         = auth()->user()->id;
                     
@@ -434,6 +459,7 @@ class OrderController extends Controller
                     $order_data['delivery_charge']     = 0;
                     $order_data['discount']            = 0;
                     $order_data['total_amount']        = $total;
+                    // $order_data['number_of_employee']  =  $request->number_of_employee;
                     $order_data['track_number']        = OrderController::generate_order_track_number();
     
                     $order = Order::create($order_data);
@@ -449,23 +475,29 @@ class OrderController extends Controller
                     foreach ($carts as $cart) {
     
                         if ($cart->product) {
+                          
                             array_push($ordered_product_ids, $cart->product_id);
-                            $order_product_saved =  $order_product->store($cart, $order->id);
+                            $order_product_saved =  $order_product->store($cart, $order->id, $cart->subscriber_id, $request->number_of_employee, $cart->price, $cart->service_charge, $cart->user_number);
     
-                           array_push($product_for_mail, [
+                            array_push($product_for_mail, [
                                'product_name'=>$order_product_saved->product_name,
                                'quantity'=>$order_product_saved->quantity,
                                'image'=> env('API_URL').'/images/uploads/products_thumb/'.$order_product_saved->product_photo,
-                           ]);
+                            ]);
     
-                            if ($order_product_saved->discount_price != null) {
-                                $order_amount+=$order_product_saved->discount_price*$order_product_saved->quantity;
-                            }else{
-                                $order_amount+=$order_product_saved->price*$order_product_saved->quantity;
-                            }
+                            $order_amount += $order_product_saved->price * $order_product_saved->quantity + $cart->service_charge;
+                            
                             $cartsInfo = Cart::where('customer_id', auth()->user()->id)->where('id', $cart->id)->first();
                             $cartsInfo->status = 1;
                             $cartsInfo->save();
+                            
+                            $customerPackage = new CustomerPackage();
+                            $customerPackage->customer_id    =  auth()->user()->id;
+                            $customerPackage->package_id     =  $cart->subscriber_id;
+                            $customerPackage->total_amount   =  $order_amount;
+                            $customerPackage->service_charge =  $cart->service_charge;
+                            $customerPackage->save();
+                            
                             OrderController::product_stock_reducer($cart);
                         }
                     }
@@ -474,9 +506,11 @@ class OrderController extends Controller
     
              
             }
-          
-            $charge = $this->createCharge($token['id'], $order_amount);
             
+           
+            $totalAmountsOrder = intval($order_amount);
+            $charge = $this->createCharge($token['id'], $totalAmountsOrder);
+      
             $customerAddress = CustomerAddress::where('customer_id', auth()->user()->id)->first();
             
             if(empty($customerAddress)) {
@@ -493,6 +527,7 @@ class OrderController extends Controller
                 $customerAddres->city        =  $request->city;
                 $customerAddres->customer_id = auth()->user()->id;
                 $customerAddres->save();
+                
             } else {
                 
                 $customerAddressUpdate = CustomerAddress::where('customer_id', auth()->user()->id)->first();
@@ -509,7 +544,50 @@ class OrderController extends Controller
                 $customerAddressUpdate->save();
                 
             }
-          
+            
+            $customerShippingAddressExistCheck = CustomerShippingAddress::where('customer_id', auth()->user()->id)->first();
+            
+            $shippingEmail     = $request->shipping_email;
+            $shippingAddress   = $request->shipping_address;
+            $shippingCity      = $request->shipping_city;
+            $shippingZip       = $request->shipping_zip_code;
+            $shippingCountry   = $request->shipping_country;
+            $shippingPhone     = $request->phone;
+            
+            if(!empty($request->is_bill_address)) {
+                $shippingEmail    = $request->email;
+                $shippingAddress  = $request->shipping_address;
+                $shippingCity     = $request->city;
+                $shippingZip      = $request->zip_code;
+                $shippingCountry  = $request->shipping_country;
+                $shippingPhone    = $request->shipping_phone;
+            }
+            
+            if(!empty($customerShippingAddressExistCheck)) {
+
+                $customerShippingAddressUpdate = CustomerShippingAddress::where('customer_id', auth()->user()->id)->first();
+                $customerShippingAddressUpdate->email        = $shippingEmail;
+                $customerShippingAddressUpdate->address      = $shippingAddress;
+                $customerShippingAddressUpdate->city         = $shippingCity;
+                $customerShippingAddressUpdate->country      = $shippingCountry;
+                $customerShippingAddressUpdate->phone_number  = $shippingPhone;
+                $customerShippingAddressUpdate->zip_code     = $shippingZip;
+                $customerShippingAddressUpdate->save();
+                
+            } else {
+                
+                $customerShippingAddressSave = new CustomerShippingAddress();
+                $customerShippingAddressSave->customer_id = auth()->user()->id;
+                $customerShippingAddressSave->email        = $shippingEmail;
+                $customerShippingAddressSave->address      = $shippingAddress;
+                $customerShippingAddressSave->city         = $shippingCity;
+                $customerShippingAddressSave->country      = $shippingCountry;
+                $customerShippingAddressSave->zip_code     = $shippingZip;
+                $customerShippingAddressSave->phone_number  = $shippingPhone;
+                $customerShippingAddressSave->customer_id  = auth()->user()->id;
+                $customerShippingAddressSave->save();
+                
+            }
             
             if(!empty($charge->id)) {
                 
@@ -523,29 +601,45 @@ class OrderController extends Controller
                 $paymentInfo->outcome                = json_encode($charge->outcome);
                 $paymentInfo->billing_details        = json_encode($charge->billing_details);
                 $paymentInfo->payment_method_details = json_encode($charge->payment_method_details);
-                $paymentInfo->source                = json_encode($charge->source);
+                $paymentInfo->source                 = json_encode($charge->source);
                 $paymentInfo->all_status             = json_encode($charge);
                 $paymentInfo->status                 = $charge->status;
                 $paymentInfo->save();  
                 
-            }
                 
-            $data = array('name'=>"Shifti");
+            }
             
-            Mail::send('mail', $data, function($message) {
-             $message->to('ratonkumarcse@gmail.com', 'Order Information mail')->subject
+            $title = 'Order Confrimation '. $order->order_number;
+            
+            $data = array(
+                'name'               => $request->fullName, 
+                'type'               => "Order Confirmation", 
+                'message'            => $request->fullName, 
+                'TotalAmount'        => $order_amount, 
+                'serviceFee'         => $request->fullName,
+                'numberOfEomployee'  => $request->fullName, 
+                'email'              => $request->email,
+                'job_title'          => $title,
+                'email_title'        => $title,
+            );
+             Mail::send(['html' => 'mail'], compact('data'), function($message) use ($data) {
+                 
+            // Mail::send('mail', $data, function($message) {
+             $message->to($data['email'], 'Order Confirmation mail')->subject
                 ('Order Information mail');
              $message->from('shifti@mamundevstudios.com','Shifti');
             });
+            
+            Emailhistory::emailSendList($request->fullName,  $title, '',  1, $order->order_number, '', $request->email);// 1 Purchaase type
         
             if (!empty($charge) && $charge['status'] == 'succeeded') {
                return response()->json($charge);
             } else {
                 return response()->json(['message' => 'Payment failed']);
             }
-            $data['order_number'] = $order->order_number;
-            $data['amount'] = $order_amount + 0;
-            $data['payment_method_id'] =1;
+            $data['order_number']      = $order->order_number;
+            $data['amount']            = $order_amount + 0;
+            $data['payment_method_id'] = 1;
             
             
 
