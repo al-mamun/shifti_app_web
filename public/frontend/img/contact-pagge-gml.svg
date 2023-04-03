@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38">
+  <g id="Group_1452" data-name="Group 1452" transform="translate(-1347 -645)">
+    <circle id="Ellipse_128" data-name="Ellipse 128" cx="19" cy="19" r="19" transform="translate(1347 645)" fill="tomato"/>
+    <g id="envelope-fill" transform="translate(1358 658)">
+      <path id="Path_217" data-name="Path 217" d="M.048,5.978A1.9,1.9,0,0,1,1.9,4.5H13.3a1.9,1.9,0,0,1,1.853,1.478L7.6,10.594ZM0,7.062v6.75l5.514-3.38Zm6.424,3.927L.181,14.815A1.9,1.9,0,0,0,1.9,15.9H13.3a1.9,1.9,0,0,0,1.718-1.087L8.777,10.988l-1.176.72-1.177-.719Zm3.265-.557,5.514,3.38V7.062L9.688,10.431Z" transform="translate(0 -4.5)" fill="#fff" fill-rule="evenodd"/>
+    </g>
+  </g>
+</svg>

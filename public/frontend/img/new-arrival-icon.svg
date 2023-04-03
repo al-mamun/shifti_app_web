@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="50" height="50" viewBox="0 0 50 50">
+  <defs>
+    <filter id="Ellipse_2" x="0" y="0" width="50" height="50" filterUnits="userSpaceOnUse">
+      <feOffset dy="4" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#27bcf2" flood-opacity="0.4"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_710" data-name="Group 710" transform="translate(-177 -1252)">
+    <g id="Group_586" data-name="Group 586">
+      <g transform="matrix(1, 0, 0, 1, 177, 1252)" filter="url(#Ellipse_2)">
+        <circle id="Ellipse_2-2" data-name="Ellipse 2" cx="16" cy="16" r="16" transform="translate(9 5)" fill="#27bcf2"/>
+      </g>
+      <g id="Group_585" data-name="Group 585">
+        <path id="Polygon_1" data-name="Polygon 1" d="M3.5,0,7,7H0Z" transform="translate(198 1263)" fill="#fff"/>
+        <path id="Polygon_2" data-name="Polygon 2" d="M3.5,0,7,7H0Z" transform="translate(205 1284) rotate(180)" fill="#fff"/>
+        <path id="Polygon_3" data-name="Polygon 3" d="M3.5,0,7,7H0Z" transform="translate(191 1277) rotate(-90)" fill="#fff"/>
+        <path id="Polygon_4" data-name="Polygon 4" d="M3.5,0,7,7H0Z" transform="translate(212 1270) rotate(90)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>

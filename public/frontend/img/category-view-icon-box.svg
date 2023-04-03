@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="35.965" height="35.965" viewBox="0 0 35.965 35.965">
+  <g id="grid" transform="translate(-4.5 -4.5)">
+    <path id="Path_545" data-name="Path 545" d="M16.488,4.5H7.5a3,3,0,0,0-3,3v8.991a3,3,0,0,0,3,3h8.991a3,3,0,0,0,3-3V7.5A3,3,0,0,0,16.488,4.5Zm0,11.988H7.5V7.5h8.991Z" fill="tomato"/>
+    <path id="Path_546" data-name="Path 546" d="M32.238,4.5H23.247a3,3,0,0,0-3,3v8.991a3,3,0,0,0,3,3h8.991a3,3,0,0,0,3-3V7.5A3,3,0,0,0,32.238,4.5Zm0,11.988H23.247V7.5h8.991Z" transform="translate(5.23)" fill="tomato"/>
+    <path id="Path_547" data-name="Path 547" d="M16.488,20.25H7.5a3,3,0,0,0-3,3v8.991a3,3,0,0,0,3,3h8.991a3,3,0,0,0,3-3V23.247A3,3,0,0,0,16.488,20.25Zm0,11.988H7.5V23.247h8.991Z" transform="translate(0 5.23)" fill="tomato"/>
+    <path id="Path_548" data-name="Path 548" d="M32.238,20.25H23.247a3,3,0,0,0-3,3v8.991a3,3,0,0,0,3,3h8.991a3,3,0,0,0,3-3V23.247A3,3,0,0,0,32.238,20.25Zm0,11.988H23.247V23.247h8.991Z" transform="translate(5.23 5.23)" fill="tomato"/>
+  </g>
+</svg>
