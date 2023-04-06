@@ -369,7 +369,7 @@ trait Localization
                     $list = $messages[$variable.'_standalone'] ?? null;
 
                     if ($list) {
-                        foreach ($$variable as $index => &$name) {
+                        foreach ($variable as $index => &$name) {
                             $name .= '|'.$messages[$variable.'_standalone'][$index];
                         }
                     }
